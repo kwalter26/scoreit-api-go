@@ -4,7 +4,8 @@ CREATE TABLE "users"
     "username"   varchar     NOT NULL,
     "first_name" varchar     NOT NULL,
     "last_name"  varchar     NOT NULL,
-    "created_at" timestamptz NOT NULL DEFAULT (now())
+    "created_at" timestamptz NOT NULL DEFAULT (now()),
+    "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "teams"

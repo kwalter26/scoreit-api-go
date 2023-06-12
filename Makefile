@@ -13,7 +13,7 @@ migratedown1:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
 db_docs:
-	dbdocs build doc/db.dbml
+	dbdocs build docs/db.dbml
 
 db_schema:
 	dbml2sql --postgres -o docs/schema.sql docs/db.dbml
