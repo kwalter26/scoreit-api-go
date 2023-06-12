@@ -18,5 +18,7 @@ db_docs:
 db_schema:
 	dbml2sql --postgres -o docs/schema.sql docs/db.dbml
 
+sqlc:
+	sqlc generate
 
 .PHONY: db_docs db_schema
