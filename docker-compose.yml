@@ -1,0 +1,35 @@
+# docker-compose up -d
+version: '3.7'
+services:
+  postgres:
+    image: postgres:15.3-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: scoreit
+    ports:
+      - 5432:5432
+    networks:
+      - scoreit-network
+
+  # service for local docker image
+  scoreit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank
+    restart: always
+    ports:
+      - 8080:8080
+      - 9090:9090
+    networks:
+      - scoreit-network
+    depends_on:
+      - postgres
+    environment:
+      - DB_SOURCE=postgresql://root:secret@postgres:5432/scoreit?sslmode=disable
+      - DB_DRIVER=postgres
+networks:
+  scoreit-network:
+    driver: bridge
