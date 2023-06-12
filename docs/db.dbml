@@ -1,0 +1,32 @@
+Project score_it {
+  database_type: 'PostGreSQL'
+  Note: '''
+    # Scoreit Team Database
+  '''
+}
+
+Table users as U {
+    id int [pk, increment]
+    username varchar [not null]
+    first_name varchar [not null]
+    last_name varchar [not null]
+    created_at timestamptz [not null, default: `now()`]
+    Indexes {
+        (username)[unique]
+    }
+}
+
+Table teams as T {
+    id int [pk, increment]
+    name varchar [not null]
+    created_at timestamptz [not null, default: `now()`]
+}
+
+Table user_teams as UT {
+    id int [pk,increment]
+    number int [not null]
+    primary_position varchar [not null]
+    user_id int [ref: > U.id, not null]
+    team_id int [ref: > T.id, not null]
+    created_at timestamptz [not null, default: `now()`]
+}
