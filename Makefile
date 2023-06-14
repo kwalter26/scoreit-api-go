@@ -21,4 +21,7 @@ db_schema:
 sqlc:
 	sqlc generate
 
+test:
+	go test -v -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools
+
 .PHONY: db_docs db_schema
