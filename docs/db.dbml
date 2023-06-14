@@ -6,7 +6,7 @@ Project score_it {
 }
 
 Table users as U {
-    id int [pk, increment]
+    id uuid [pk, default: `uuid_generate_v4()`, not null]
     username varchar [not null]
     first_name varchar [not null]
     last_name varchar [not null]
@@ -18,16 +18,16 @@ Table users as U {
 }
 
 Table teams as T {
-    id int [pk, increment]
+    id uuid [pk, default: `uuid_generate_v4()`, not null]
     name varchar [not null]
     created_at timestamptz [not null, default: `now()`]
 }
 
 Table user_teams as UT {
-    id int [pk,increment]
+    id uuid [pk, default: `uuid_generate_v4()`, not null]
     number int [not null]
     primary_position varchar [not null]
-    user_id int [ref: > U.id, not null]
-    team_id int [ref: > T.id, not null]
+    user_id uuid [ref: > U.id, not null]
+    team_id uuid [ref: > T.id, not null]
     created_at timestamptz [not null, default: `now()`]
 }
