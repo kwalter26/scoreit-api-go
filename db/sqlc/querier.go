@@ -11,8 +11,14 @@ import (
 )
 
 type Querier interface {
+	CreateTeam(ctx context.Context, name string) (Team, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteTeam(ctx context.Context, id uuid.UUID) error
+	DeleteUser(ctx context.Context, id uuid.UUID) error
+	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
+	ListTeams(ctx context.Context, arg ListTeamsParams) ([]Team, error)
+	UpdateTeam(ctx context.Context, arg UpdateTeamParams) (Team, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
