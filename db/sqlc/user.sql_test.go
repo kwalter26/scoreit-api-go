@@ -9,15 +9,28 @@ import (
 )
 
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
 	arg := CreateUserParams{
-		Username:  util.RandomName(),
-		FirstName: util.RandomName(),
-		LastName:  util.RandomName(),
+		Username:       util.RandomName(),
+		FirstName:      util.RandomName(),
+		LastName:       util.RandomName(),
+		Email:          util.RandomEmail(),
+		HashedPassword: hashedPassword,
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, user)
+
+	require.Equal(t, arg.Username, user.Username)
+	require.Equal(t, arg.FirstName, user.FirstName)
+	require.Equal(t, arg.LastName, user.LastName)
+	require.Equal(t, arg.Email, user.Email)
+	require.Equal(t, arg.HashedPassword, user.HashedPassword)
+
+	require.True(t, user.PasswordChangedAt.IsZero())
+	require.NotZero(t, user.CreatedAt)
 	return user
 }
 
@@ -52,4 +65,16 @@ func TestQueries_UpdateUser(t *testing.T) {
 	require.Equal(t, arg.Username.String, updatedUser.Username)
 	require.Equal(t, arg.FirstName.String, updatedUser.FirstName)
 	require.Equal(t, arg.LastName.String, updatedUser.LastName)
+}
+
+func TestQueries_DeleteUser(t *testing.T) {
+	user := createRandomUser(t)
+
+	err := testQueries.DeleteUser(context.Background(), user.ID)
+	require.NoError(t, err)
+
+	user2, err := testQueries.GetUser(context.Background(), user.ID)
+	require.Error(t, err)
+	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.Empty(t, user2)
 }
