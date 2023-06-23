@@ -13,33 +13,56 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (username, first_name, last_name, created_at, updated_at)
-VALUES ($1, $2, $3, now(), now())
-RETURNING id, username, first_name, last_name, created_at, updated_at
+INSERT INTO users (username, first_name, last_name, email, hashed_password)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, username, first_name, last_name, email, is_email_verified, hashed_password, password_changed_at, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Username  string `json:"username"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	Username       string `json:"username"`
+	FirstName      string `json:"first_name"`
+	LastName       string `json:"last_name"`
+	Email          string `json:"email"`
+	HashedPassword string `json:"hashed_password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.FirstName, arg.LastName)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Username,
+		arg.FirstName,
+		arg.LastName,
+		arg.Email,
+		arg.HashedPassword,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Username,
 		&i.FirstName,
 		&i.LastName,
+		&i.Email,
+		&i.IsEmailVerified,
+		&i.HashedPassword,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :exec
+DELETE
+FROM users
+WHERE id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
+}
+
 const getUser = `-- name: GetUser :one
-SELECT id, username, first_name, last_name, created_at, updated_at
+SELECT id, username, first_name, last_name, email, is_email_verified, hashed_password, password_changed_at, created_at, updated_at
 FROM users
 WHERE id = $1
 LIMIT 1
@@ -53,6 +76,10 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.Username,
 		&i.FirstName,
 		&i.LastName,
+		&i.Email,
+		&i.IsEmailVerified,
+		&i.HashedPassword,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -61,19 +88,25 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE Users
-SET username   = COALESCE($1, username),
-    first_name = COALESCE($2, first_name),
-    last_name  = COALESCE($3, last_name),
-    updated_at = now()
-WHERE id = $4
-RETURNING id, username, first_name, last_name, created_at, updated_at
+SET username          = COALESCE($1, username),
+    first_name        = COALESCE($2, first_name),
+    last_name         = COALESCE($3, last_name),
+    email             = COALESCE($4, email),
+    is_email_verified = COALESCE($5, is_email_verified),
+    hashed_password   = COALESCE($6, hashed_password),
+    updated_at        = now()
+WHERE id = $7
+RETURNING id, username, first_name, last_name, email, is_email_verified, hashed_password, password_changed_at, created_at, updated_at
 `
 
 type UpdateUserParams struct {
-	Username  sql.NullString `json:"username"`
-	FirstName sql.NullString `json:"first_name"`
-	LastName  sql.NullString `json:"last_name"`
-	ID        uuid.UUID      `json:"id"`
+	Username        sql.NullString `json:"username"`
+	FirstName       sql.NullString `json:"first_name"`
+	LastName        sql.NullString `json:"last_name"`
+	Email           sql.NullString `json:"email"`
+	IsEmailVerified sql.NullBool   `json:"is_email_verified"`
+	HashedPassword  sql.NullString `json:"hashed_password"`
+	ID              uuid.UUID      `json:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
@@ -81,6 +114,9 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.Username,
 		arg.FirstName,
 		arg.LastName,
+		arg.Email,
+		arg.IsEmailVerified,
+		arg.HashedPassword,
 		arg.ID,
 	)
 	var i User
@@ -89,6 +125,10 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Username,
 		&i.FirstName,
 		&i.LastName,
+		&i.Email,
+		&i.IsEmailVerified,
+		&i.HashedPassword,
+		&i.PasswordChangedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
