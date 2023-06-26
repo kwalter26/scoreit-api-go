@@ -24,4 +24,10 @@ sqlc:
 test:
 	go test -v -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools
 
+mock:
+	mockgen -package mockdb -destination db/mock/store.go github.com/kwalter26/scoreit-api-go/db/sqlc Store
+
+gin:
+	GIN_MODE=release gin -i run main.go --all --port 8080
+
 .PHONY: db_docs db_schema
