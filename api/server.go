@@ -24,6 +24,8 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/users", s.CreateNewUser)
 	router.POST("/api/v1/login", s.LoginUser)
 
+	router.GET("/api/v1/teams", s.ListTeams)
+
 	s.router = router
 }
 

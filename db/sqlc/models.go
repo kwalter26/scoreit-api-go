@@ -44,7 +44,7 @@ type User struct {
 
 type UserTeam struct {
 	ID              uuid.UUID `json:"id"`
-	Number          int32     `json:"number"`
+	Number          int64     `json:"number"`
 	PrimaryPosition string    `json:"primary_position"`
 	UserID          uuid.UUID `json:"user_id"`
 	TeamID          uuid.UUID `json:"team_id"`

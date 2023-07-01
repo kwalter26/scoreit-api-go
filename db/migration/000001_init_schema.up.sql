@@ -37,7 +37,7 @@ CREATE TABLE "teams"
 CREATE TABLE "user_teams"
 (
     "id"               uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "number"           int              NOT NULL,
+    "number"           bigint           NOT NULL,
     "primary_position" varchar          NOT NULL,
     "user_id"          uuid             NOT NULL,
     "team_id"          uuid             NOT NULL,

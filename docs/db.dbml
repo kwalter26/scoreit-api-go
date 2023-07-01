@@ -46,7 +46,7 @@ Table teams as T {
 
 Table user_teams as UT {
     id uuid [pk, default: `uuid_generate_v4()`, not null]
-    number int [not null]
+    number bigint [not null]
     primary_position varchar [not null]
     user_id uuid [ref: > U.id, not null]
     team_id uuid [ref: > T.id, not null]
