@@ -11,10 +11,12 @@ import (
 )
 
 type Querier interface {
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTeam(ctx context.Context, name string) (Team, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteTeam(ctx context.Context, id uuid.UUID) error
 	DeleteUser(ctx context.Context, id uuid.UUID) error
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)

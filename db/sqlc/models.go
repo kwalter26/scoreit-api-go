@@ -5,10 +5,22 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type Session struct {
+	ID           uuid.UUID    `json:"id"`
+	UserID       uuid.UUID    `json:"user_id"`
+	RefreshToken string       `json:"refresh_token"`
+	UserAgent    string       `json:"user_agent"`
+	ClientIp     string       `json:"client_ip"`
+	IsBlocked    bool         `json:"is_blocked"`
+	ExpiresAt    sql.NullTime `json:"expires_at"`
+	CreatedAt    time.Time    `json:"created_at"`
+}
 
 type Team struct {
 	ID        uuid.UUID `json:"id"`

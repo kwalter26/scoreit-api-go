@@ -54,7 +54,7 @@ Table user_teams as UT {
 }
 
 Table sessions {
-  id uuid [pk]
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
   user_id uuid [ref: > U.id, not null]
   refresh_token varchar [not null]
   user_agent varchar [not null]

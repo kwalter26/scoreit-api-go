@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-07-01T03:27:44.165Z
+-- Generated at: 2023-07-01T03:46:38.449Z
 
 CREATE TABLE "users"
 (
@@ -47,14 +47,14 @@ CREATE TABLE "user_teams"
 
 CREATE TABLE "sessions"
 (
-    "id"            uuid PRIMARY KEY,
-    "user_id"       uuid        NOT NULL,
-    "refresh_token" varchar     NOT NULL,
-    "user_agent"    varchar     NOT NULL,
-    "client_ip"     varchar     NOT NULL,
-    "is_blocked"    boolean     NOT NULL DEFAULT false,
+    "id"            uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
+    "user_id"       uuid             NOT NULL,
+    "refresh_token" varchar          NOT NULL,
+    "user_agent"    varchar          NOT NULL,
+    "client_ip"     varchar          NOT NULL,
+    "is_blocked"    boolean          NOT NULL DEFAULT false,
     "expires_at"    timestamptz,
-    "created_at"    timestamptz NOT NULL DEFAULT (now())
+    "created_at"    timestamptz      NOT NULL DEFAULT (now())
 );
 
 CREATE UNIQUE INDEX ON "users" ("username");
