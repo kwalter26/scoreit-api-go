@@ -106,36 +106,34 @@ func (s *Server) LoginUser(context *gin.Context) {
 		return
 	}
 
-	//session, err := s.store.CreateSession(context, user.ID)
-	//if err != nil {
-	//	context.JSON(500, errorResponse(err))
-	//	return
-	//}
-
-	//accessToken, err := util.GenerateAccessToken(session.ID)
-	//if err != nil {
-	//	context.JSON(500, errorResponse(err))
-	//	return
-	//}
-
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.AccessTokenDuration)
 	if err != nil {
 		context.JSON(500, errorResponse(err))
 		return
 	}
 
-	//refreshToken, err := util.GenerateRefreshToken(session.ID)
-	//if err != nil {
-	//	context.JSON(500, errorResponse(err))
-	//	return
-	//}
+	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.RefreshTokenDuration)
+	if err != nil {
+		context.JSON(500, errorResponse(err))
+		return
+	}
+
+	session, err := s.store.CreateSession(context, db.CreateSessionParams{
+		ID:           refreshPayload.ID,
+		UserID:       user.ID,
+		RefreshToken: refreshToken,
+		UserAgent:    context.GetHeader("User-Agent"),
+		ClientIp:     context.ClientIP(),
+		IsBlocked:    false,
+		ExpiresAt:    sql.NullTime{Time: refreshPayload.ExpireAt, Valid: true},
+	})
 
 	rsp := LoginUserResponse{
-		//SessionID:             session.ID,
+		SessionID:             session.ID,
 		AccessToken:           accessToken,
 		AccessTokenExpiresAt:  accessPayload.ExpireAt,
-		RefreshToken:          "",
-		RefreshTokenExpiresAt: time.Now(),
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: refreshPayload.ExpireAt,
 		User:                  NewUserResponse(user),
 	}
 

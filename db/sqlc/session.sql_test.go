@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/stretchr/testify/require"
@@ -19,6 +20,7 @@ func createRandomSession(t *testing.T) Session {
 	refreshToken, p, err := maker.CreateToken(user.Username, 4*time.Minute)
 
 	arg := CreateSessionParams{
+		ID:           uuid.New(),
 		UserID:       user.ID,
 		RefreshToken: refreshToken,
 		UserAgent:    "userAgent",
