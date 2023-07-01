@@ -3,13 +3,14 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/kwalter26/scoreit-api-go/security"
+	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/stretchr/testify/require"
-	"scoreit-api-go/util"
 	"testing"
 )
 
 func createRandomUser(t *testing.T) User {
-	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	hashedPassword, err := security.HashPassword(util.RandomString(6))
 	require.NoError(t, err)
 	arg := CreateUserParams{
 		Username:       util.RandomName(),
