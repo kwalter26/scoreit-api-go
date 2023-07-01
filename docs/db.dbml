@@ -52,3 +52,14 @@ Table user_teams as UT {
     team_id uuid [ref: > T.id, not null]
     created_at timestamptz [not null, default: `now()`]
 }
+
+Table sessions {
+  id uuid [pk]
+  user_id uuid [ref: > U.id, not null]
+  refresh_token varchar [not null]
+  user_agent varchar [not null]
+  client_ip varchar [not null]
+  is_blocked boolean [not null, default: false]
+  expires_at timestamptz
+  created_at timestamptz [not null, default: `now()`]
+}
