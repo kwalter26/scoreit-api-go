@@ -25,3 +25,6 @@ go.work
 /.vs/
 *.iml
 /dbml-error.log
+app.env
+gin-bin
+

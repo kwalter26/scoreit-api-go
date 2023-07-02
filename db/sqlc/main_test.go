@@ -2,8 +2,7 @@ package db
 
 import (
 	"database/sql"
-	"scoreit-api-go/util"
-
+	"github.com/kwalter26/scoreit-api-go/util"
 	"log"
 	"os"
 	"testing"
@@ -15,7 +14,7 @@ var testQueries *Queries
 var testDB *sql.DB
 
 func TestMain(m *testing.M) {
-	config, err := util.LoadConfig("../..", util.Local)
+	config, err := util.LoadConfig("../..", true)
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}

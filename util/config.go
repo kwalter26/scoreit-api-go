@@ -5,22 +5,27 @@ import (
 	"github.com/spf13/viper"
 	"path/filepath"
 	"reflect"
+	"time"
 )
 
 type Config struct {
-	DBDriver          string `mapstructure:"DB_DRIVER"`
-	DBSource          string `mapstructure:"DB_SOURCE"`
-	HttpServerAddress string `mapstructure:"HTTP_SERVER_ADDRESS"`
+	Environment         Environment   `mapstructure:"ENVIRONMENT"`
+	DBDriver            string        `mapstructure:"DB_DRIVER"`
+	DBSource            string        `mapstructure:"DB_SOURCE"`
+	MigrationUrl        string        `mapstructure:"MIGRATION_URL"`
+	HttpServerAddress   string        `mapstructure:"HTTP_SERVER_ADDRESS"`
+	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 }
 
 type Environment string
 
 const (
-	Local Environment = "local"
-	Prod  Environment = "prod"
+	Testing     Environment = "testing"
+	Development Environment = "development"
 )
 
-func LoadConfig(path string, env Environment) (config Config, err error) {
+func LoadConfig(path string, isTesting bool) (config Config, err error) {
 	v := viper.New()
 	c, err2 := BindEnv(config, v)
 	if err2 != nil {
@@ -28,7 +33,10 @@ func LoadConfig(path string, env Environment) (config Config, err error) {
 	}
 	v.AutomaticEnv()
 	absPath, err := filepath.Abs(path)
-	filename := string(env) + ".env"
+	filename := "app.env"
+	if isTesting {
+		filename = "testing.env"
+	}
 
 	v.AddConfigPath(absPath)
 	v.SetConfigName(filename)
