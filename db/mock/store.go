@@ -36,6 +36,36 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
+// AddUserToTeam mocks base method.
+func (m *MockStore) AddUserToTeam(arg0 context.Context, arg1 db.AddUserToTeamParams) (db.UserTeam, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddUserToTeam", arg0, arg1)
+	ret0, _ := ret[0].(db.UserTeam)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddUserToTeam indicates an expected call of AddUserToTeam.
+func (mr *MockStoreMockRecorder) AddUserToTeam(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserToTeam", reflect.TypeOf((*MockStore)(nil).AddUserToTeam), arg0, arg1)
+}
+
+// CreateSession mocks base method.
+func (m *MockStore) CreateSession(arg0 context.Context, arg1 db.CreateSessionParams) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockStoreMockRecorder) CreateSession(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockStore)(nil).CreateSession), arg0, arg1)
+}
+
 // CreateTeam mocks base method.
 func (m *MockStore) CreateTeam(arg0 context.Context, arg1 string) (db.Team, error) {
 	m.ctrl.T.Helper()
@@ -92,6 +122,21 @@ func (m *MockStore) DeleteUser(arg0 context.Context, arg1 uuid.UUID) error {
 func (mr *MockStoreMockRecorder) DeleteUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockStore)(nil).DeleteUser), arg0, arg1)
+}
+
+// GetSession mocks base method.
+func (m *MockStore) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSession indicates an expected call of GetSession.
+func (mr *MockStoreMockRecorder) GetSession(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockStore)(nil).GetSession), arg0, arg1)
 }
 
 // GetTeam mocks base method.
@@ -152,6 +197,36 @@ func (m *MockStore) ListTeams(arg0 context.Context, arg1 db.ListTeamsParams) ([]
 func (mr *MockStoreMockRecorder) ListTeams(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeams", reflect.TypeOf((*MockStore)(nil).ListTeams), arg0, arg1)
+}
+
+// ListTeamsOfUser mocks base method.
+func (m *MockStore) ListTeamsOfUser(arg0 context.Context, arg1 db.ListTeamsOfUserParams) ([]db.ListTeamsOfUserRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeamsOfUser", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListTeamsOfUserRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeamsOfUser indicates an expected call of ListTeamsOfUser.
+func (mr *MockStoreMockRecorder) ListTeamsOfUser(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeamsOfUser", reflect.TypeOf((*MockStore)(nil).ListTeamsOfUser), arg0, arg1)
+}
+
+// ListUsersOfTeam mocks base method.
+func (m *MockStore) ListUsersOfTeam(arg0 context.Context, arg1 db.ListUsersOfTeamParams) ([]db.ListUsersOfTeamRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUsersOfTeam", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListUsersOfTeamRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUsersOfTeam indicates an expected call of ListUsersOfTeam.
+func (mr *MockStoreMockRecorder) ListUsersOfTeam(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsersOfTeam", reflect.TypeOf((*MockStore)(nil).ListUsersOfTeam), arg0, arg1)
 }
 
 // UpdateTeam mocks base method.

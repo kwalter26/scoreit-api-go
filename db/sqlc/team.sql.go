@@ -133,11 +133,11 @@ func (q *Queries) ListTeams(ctx context.Context, arg ListTeamsParams) ([]Team, e
 }
 
 const listTeamsOfUser = `-- name: ListTeamsOfUser :many
-SELECT id, name, created_at, updated_at
-FROM teams
-WHERE id IN (
+SELECT t.id, t.name
+FROM teams t
+WHERE t.id IN (
     SELECT team_id
-    FROM user_teams
+    FROM user_teams ut
     WHERE user_id = $1
 )
 LIMIT $2 OFFSET $3
@@ -149,21 +149,21 @@ type ListTeamsOfUserParams struct {
 	Offset int32     `json:"offset"`
 }
 
-func (q *Queries) ListTeamsOfUser(ctx context.Context, arg ListTeamsOfUserParams) ([]Team, error) {
+type ListTeamsOfUserRow struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+func (q *Queries) ListTeamsOfUser(ctx context.Context, arg ListTeamsOfUserParams) ([]ListTeamsOfUserRow, error) {
 	rows, err := q.db.QueryContext(ctx, listTeamsOfUser, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Team{}
+	items := []ListTeamsOfUserRow{}
 	for rows.Next() {
-		var i Team
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
+		var i ListTeamsOfUserRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

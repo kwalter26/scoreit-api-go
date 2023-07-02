@@ -146,3 +146,47 @@ func TestQueries_ListUsersInTeam(t *testing.T) {
 		}
 	}
 }
+
+func TestQueries_ListTeamsOfUser(t *testing.T) {
+	user := createRandomUser(t)
+	var teams []struct {
+		team     Team
+		userTeam UserTeam
+	}
+	// Create 5 random teams
+	for i := 0; i < 5; i++ {
+		team := createRandomTeam(t)
+
+		arg := AddUserToTeamParams{
+			UserID:          user.ID,
+			TeamID:          team.ID,
+			Number:          util.RandomInt(1, 99),
+			PrimaryPosition: string(util.RandomBaseballPosition()),
+		}
+		userTeam, err := testQueries.AddUserToTeam(context.Background(), arg)
+		require.NoError(t, err)
+		teams = append(teams, struct {
+			team     Team
+			userTeam UserTeam
+		}{team: team, userTeam: userTeam})
+	}
+
+	listedTeams, err := testQueries.ListTeamsOfUser(context.Background(), ListTeamsOfUserParams{
+		UserID: user.ID,
+		Limit:  5,
+		Offset: 0,
+	})
+
+	require.NoError(t, err)
+	require.Len(t, teams, 5)
+
+	for _, team := range listedTeams {
+		require.NotEmpty(t, team)
+		for _, u := range teams {
+			if team.ID == u.team.ID {
+				require.Equal(t, team.ID, u.team.ID)
+				require.Equal(t, team.Name, u.team.Name)
+			}
+		}
+	}
+}

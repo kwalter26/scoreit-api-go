@@ -22,16 +22,6 @@ FROM teams
 ORDER BY id
 LIMIT $1 OFFSET $2;
 
--- name: ListTeamsOfUser :many
-SELECT *
-FROM teams
-WHERE id IN (
-    SELECT team_id
-    FROM user_teams
-    WHERE user_id = $1
-)
-LIMIT $2 OFFSET $3;
-
 -- name: ListUsersOfTeam :many
 SELECT u.id, u.first_name, u.last_name, ut.primary_position, ut.number, t.name as team_name
 FROM users u
@@ -41,6 +31,16 @@ WHERE u.id IN (
     SELECT user_id
     FROM user_teams
     WHERE ut.team_id = $1
+)
+LIMIT $2 OFFSET $3;
+
+-- name: ListTeamsOfUser :many
+SELECT t.id, t.name
+FROM teams t
+WHERE t.id IN (
+    SELECT team_id
+    FROM user_teams ut
+    WHERE user_id = $1
 )
 LIMIT $2 OFFSET $3;
 
