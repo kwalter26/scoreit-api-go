@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
 	"time"
@@ -44,7 +45,7 @@ func NewUserResponse(user db.User) CreateUserResponse {
 func (s *Server) CreateNewUser(context *gin.Context) {
 	var req CreateUserRequest
 	if err := context.ShouldBindJSON(&req); err != nil {
-		context.JSON(400, errorResponse(err))
+		context.JSON(400, helpers.ErrorResponse(err))
 		return
 	}
 
@@ -59,7 +60,7 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 
 	user, err := s.store.CreateUser(context, arg)
 	if err != nil {
-		context.JSON(500, errorResponse(err))
+		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
 
@@ -87,34 +88,34 @@ type LoginUserResponse struct {
 func (s *Server) LoginUser(context *gin.Context) {
 	var req LoginUserRequest
 	if err := context.ShouldBindJSON(&req); err != nil {
-		context.JSON(400, errorResponse(err))
+		context.JSON(400, helpers.ErrorResponse(err))
 		return
 	}
 
 	user, err := s.store.GetUserByUsername(context, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(400, errorResponse(err))
+			context.JSON(400, helpers.ErrorResponse(err))
 			return
 		}
-		context.JSON(500, errorResponse(err))
+		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
 
 	if err := security.CheckPassword(req.Password, user.HashedPassword); err != nil {
-		context.JSON(401, errorResponse(err))
+		context.JSON(401, helpers.ErrorResponse(err))
 		return
 	}
 
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.AccessTokenDuration)
 	if err != nil {
-		context.JSON(500, errorResponse(err))
+		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
 
 	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.RefreshTokenDuration)
 	if err != nil {
-		context.JSON(500, errorResponse(err))
+		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
 

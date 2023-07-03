@@ -11,7 +11,7 @@ LIMIT 1;
 
 -- name: UpdateTeam :one
 UPDATE teams
-SET name   = COALESCE(sqlc.narg(name), name),
+SET name       = COALESCE(sqlc.narg(name), name),
     updated_at = now()
 WHERE id = sqlc.arg(id)
 RETURNING *;
@@ -22,31 +22,27 @@ FROM teams
 ORDER BY id
 LIMIT $1 OFFSET $2;
 
--- name: ListUsersOfTeam :many
-SELECT u.id, u.first_name, u.last_name, ut.primary_position, ut.number, t.name as team_name
+-- name: ListTeamMembers :many
+SELECT u.id, u.first_name, u.last_name, tm.primary_position, tm.number, t.name as team_name
 FROM users u
- JOIN user_teams ut on u.id = ut.user_id
- JOIN teams t ON ut.team_id = t.id
-WHERE u.id IN (
-    SELECT user_id
-    FROM user_teams
-    WHERE ut.team_id = $1
-)
+         JOIN team_members tm on u.id = tm.user_id
+         JOIN teams t ON tm.team_id = t.id
+WHERE u.id IN (SELECT user_id
+               FROM team_members
+               WHERE tm.team_id = $1)
 LIMIT $2 OFFSET $3;
 
 -- name: ListTeamsOfUser :many
 SELECT t.id, t.name
 FROM teams t
-WHERE t.id IN (
-    SELECT team_id
-    FROM user_teams ut
-    WHERE user_id = $1
-)
+WHERE t.id IN (SELECT team_id
+               FROM team_members tm
+               WHERE user_id = $1)
 LIMIT $2 OFFSET $3;
 
--- name: AddUserToTeam :one
-INSERT INTO user_teams (user_id, team_id,number,primary_position)
-VALUES ($1, $2,$3,$4)
+-- name: AddTeamMember :one
+INSERT INTO team_members (user_id, team_id, number, primary_position)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: DeleteTeam :exec

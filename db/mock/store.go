@@ -39,7 +39,7 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 // AddUserToTeam mocks base method.
 func (m *MockStore) AddUserToTeam(arg0 context.Context, arg1 db.AddUserToTeamParams) (db.UserTeam, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddUserToTeam", arg0, arg1)
+	ret := m.ctrl.Call(m, "AddTeamMember", arg0, arg1)
 	ret0, _ := ret[0].(db.UserTeam)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -48,7 +48,7 @@ func (m *MockStore) AddUserToTeam(arg0 context.Context, arg1 db.AddUserToTeamPar
 // AddUserToTeam indicates an expected call of AddUserToTeam.
 func (mr *MockStoreMockRecorder) AddUserToTeam(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserToTeam", reflect.TypeOf((*MockStore)(nil).AddUserToTeam), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTeamMember", reflect.TypeOf((*MockStore)(nil).AddUserToTeam), arg0, arg1)
 }
 
 // CreateSession mocks base method.

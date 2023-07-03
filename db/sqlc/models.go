@@ -29,6 +29,16 @@ type Team struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type TeamMember struct {
+	ID              uuid.UUID `json:"id"`
+	Number          int64     `json:"number"`
+	PrimaryPosition string    `json:"primary_position"`
+	UserID          uuid.UUID `json:"user_id"`
+	TeamID          uuid.UUID `json:"team_id"`
+	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
+}
+
 type User struct {
 	ID                uuid.UUID `json:"id"`
 	Username          string    `json:"username"`
@@ -40,15 +50,6 @@ type User struct {
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdatedAt         time.Time `json:"updated_at"`
-}
-
-type UserTeam struct {
-	ID              uuid.UUID `json:"id"`
-	Number          int64     `json:"number"`
-	PrimaryPosition string    `json:"primary_position"`
-	UserID          uuid.UUID `json:"user_id"`
-	TeamID          uuid.UUID `json:"team_id"`
-	CreatedAt       time.Time `json:"created_at"`
 }
 
 type VerifyEmail struct {
