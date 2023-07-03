@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
@@ -9,8 +10,8 @@ import (
 
 // ListTeamsRequest represents a request to list teams.
 type ListTeamsRequest struct {
-	Limit  int32 `form:"limit,default=5"`
-	Offset int32 `form:"offset,default=0"`
+	PageSize int32 `form:"page_size,default=5" binding:"max=100,min=1"`
+	PageId   int32 `form:"page_id,default=0" binding:"min=0"`
 }
 
 // TeamResponse represents a response from a team request.
@@ -27,8 +28,8 @@ func (s *Server) ListTeams(context *gin.Context) {
 	}
 
 	arg := db.ListTeamsParams{
-		Limit:  req.Limit,
-		Offset: req.Offset,
+		Limit:  req.PageSize,
+		Offset: req.PageId,
 	}
 
 	teams, err := s.store.ListTeams(context, arg)
@@ -61,7 +62,7 @@ type AddTeamMemberRequest struct {
 
 // AddTeamRequestBody represents the body of a request to add a team.
 type AddTeamRequestBody struct {
-	Number          int64  `json:"number" binding:"required"`
+	Number          int64  `json:"number" binding:"required,min=0"`
 	PrimaryPosition string `json:"primary_position" binding:"required"`
 }
 
@@ -79,17 +80,9 @@ func (s *Server) AddTeamMember(context *gin.Context) {
 		return
 	}
 
-	userId, err := uuid.Parse(req.UserID)
-	if err != nil {
-		context.JSON(400, helpers.ErrorResponse(err))
-		return
-	}
+	userId := uuid.MustParse(req.UserID)
 
-	teamId, err := uuid.Parse(req.TeamID)
-	if err != nil {
-		context.JSON(400, helpers.ErrorResponse(err))
-		return
-	}
+	teamId := uuid.MustParse(req.TeamID)
 
 	arg := db.AddTeamMemberParams{
 		UserID:          userId,
@@ -120,14 +113,14 @@ func (s *Server) GetTeam(context *gin.Context) {
 		return
 	}
 
-	id, err := uuid.Parse(req.ID)
-	if err != nil {
-		context.JSON(400, helpers.ErrorResponse(err))
-		return
-	}
+	id := uuid.MustParse(req.ID)
 
 	team, err := s.store.GetTeam(context, id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			context.JSON(404, helpers.ErrorResponse(err))
+			return
+		}
 		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
@@ -164,8 +157,8 @@ type ListTeamMembersRequest struct {
 
 // ListTeamMembersRequestQuery represents a request to list team members.
 type ListTeamMembersRequestQuery struct {
-	Limit  int32 `form:"limit,default=5"`
-	Offset int32 `form:"offset,default=0"`
+	PageSize int32 `form:"page_size,default=5" binding:"max=100,min=1"`
+	PageId   int32 `form:"page_id,default=0" binding:"min=0"`
 }
 
 // ListTeamMembers lists team members.
@@ -182,16 +175,12 @@ func (s *Server) ListTeamMembers(context *gin.Context) {
 		return
 	}
 
-	id, err := uuid.Parse(req.ID)
-	if err != nil {
-		context.JSON(400, helpers.ErrorResponse(err))
-		return
-	}
+	id := uuid.MustParse(req.ID)
 
 	arg := db.ListTeamMembersParams{
 		TeamID: id,
-		Limit:  query.Limit,
-		Offset: query.Offset,
+		Limit:  query.PageSize,
+		Offset: query.PageId,
 	}
 
 	members, err := s.store.ListTeamMembers(context, arg)
