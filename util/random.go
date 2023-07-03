@@ -23,10 +23,6 @@ func RandomName() string {
 	return RandomString(6)
 }
 
-func RandomBalance() int64 {
-	return rand.Int63n(1000)
-}
-
 func RandomInt(min, max int64) int64 {
 	return min + rand.Int63n(max-min+1)
 }

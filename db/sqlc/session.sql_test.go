@@ -38,7 +38,8 @@ func createRandomSession(t *testing.T) Session {
 	require.Equal(t, "userAgent", session.UserAgent)
 	require.Equal(t, "clientIp", session.ClientIp)
 	require.Equal(t, false, session.IsBlocked)
-	require.Equal(t, p.ExpireAt.UTC(), session.ExpiresAt.Time)
+	require.WithinDurationf(t, p.ExpireAt.UTC(), session.ExpiresAt.Time, time.Second, "expire at should be about 4 minutes")
+	require.WithinDurationf(t, p.IssuedAt.UTC(), session.CreatedAt.UTC(), time.Second, "created at should be about now")
 
 	return session
 }
