@@ -9,13 +9,15 @@ import (
 )
 
 type Config struct {
-	Environment         Environment   `mapstructure:"ENVIRONMENT"`
-	DBDriver            string        `mapstructure:"DB_DRIVER"`
-	DBSource            string        `mapstructure:"DB_SOURCE"`
-	MigrationUrl        string        `mapstructure:"MIGRATION_URL"`
-	HttpServerAddress   string        `mapstructure:"HTTP_SERVER_ADDRESS"`
-	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
-	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
+	Environment          Environment   `mapstructure:"ENVIRONMENT"`
+	DBDriver             string        `mapstructure:"DB_DRIVER"`
+	DBSource             string        `mapstructure:"DB_SOURCE"`
+	MigrationUrl         string        `mapstructure:"MIGRATION_URL"`
+	HttpServerAddress    string        `mapstructure:"HTTP_SERVER_ADDRESS"`
+	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
+
+	TokenSymmetricKey string `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 }
 
 type Environment string
