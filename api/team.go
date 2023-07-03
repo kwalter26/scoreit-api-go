@@ -55,21 +55,47 @@ func NewTeamResponse(team db.Team) TeamResponse {
 
 // AddTeamMemberRequest represents a request to add a user to a team.
 type AddTeamMemberRequest struct {
-	UserID uuid.UUID `json:"user_id" binding:"required"`
-	TeamID uuid.UUID `json:"team_id" binding:"required"`
+	TeamID string `uri:"id" binding:"required,uuid"`
+	UserID string `uri:"user_id" binding:"required,uuid"`
+}
+
+// AddTeamRequestBody represents the body of a request to add a team.
+type AddTeamRequestBody struct {
+	Number          int64  `json:"number" binding:"required"`
+	PrimaryPosition string `json:"primary_position" binding:"required"`
 }
 
 // AddTeamMember adds a user to a team.
 func (s *Server) AddTeamMember(context *gin.Context) {
 	var req AddTeamMemberRequest
-	if err := context.ShouldBindJSON(&req); err != nil {
+	if err := context.ShouldBindUri(&req); err != nil {
+		context.JSON(400, helpers.ErrorResponse(err))
+		return
+	}
+
+	var body AddTeamRequestBody
+	if err := context.ShouldBindJSON(&body); err != nil {
+		context.JSON(400, helpers.ErrorResponse(err))
+		return
+	}
+
+	userId, err := uuid.Parse(req.UserID)
+	if err != nil {
+		context.JSON(400, helpers.ErrorResponse(err))
+		return
+	}
+
+	teamId, err := uuid.Parse(req.TeamID)
+	if err != nil {
 		context.JSON(400, helpers.ErrorResponse(err))
 		return
 	}
 
 	arg := db.AddTeamMemberParams{
-		UserID: req.UserID,
-		TeamID: req.TeamID,
+		UserID:          userId,
+		TeamID:          teamId,
+		Number:          body.Number,
+		PrimaryPosition: body.PrimaryPosition,
 	}
 
 	userTeam, err := s.store.AddTeamMember(context, arg)
@@ -133,15 +159,25 @@ func (s *Server) CreateTeam(context *gin.Context) {
 
 // ListTeamMembersRequest represents a request to list team members.
 type ListTeamMembersRequest struct {
-	ID     string `uri:"id" binding:"required,uuid"`
-	Limit  int32  `form:"limit,default=5"`
-	Offset int32  `form:"offset,default=0"`
+	ID string `uri:"id" binding:"required,uuid"`
+}
+
+// ListTeamMembersRequestQuery represents a request to list team members.
+type ListTeamMembersRequestQuery struct {
+	Limit  int32 `form:"limit,default=5"`
+	Offset int32 `form:"offset,default=0"`
 }
 
 // ListTeamMembers lists team members.
 func (s *Server) ListTeamMembers(context *gin.Context) {
 	var req ListTeamMembersRequest
 	if err := context.ShouldBindUri(&req); err != nil {
+		context.JSON(400, helpers.ErrorResponse(err))
+		return
+	}
+
+	var query ListTeamMembersRequestQuery
+	if err := context.ShouldBindQuery(&query); err != nil {
 		context.JSON(400, helpers.ErrorResponse(err))
 		return
 	}
@@ -154,8 +190,8 @@ func (s *Server) ListTeamMembers(context *gin.Context) {
 
 	arg := db.ListTeamMembersParams{
 		TeamID: id,
-		Limit:  req.Limit,
-		Offset: req.Offset,
+		Limit:  query.Limit,
+		Offset: query.Offset,
 	}
 
 	members, err := s.store.ListTeamMembers(context, arg)

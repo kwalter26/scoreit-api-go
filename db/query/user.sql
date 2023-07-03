@@ -9,7 +9,7 @@ FROM users
 WHERE id = $1
 LIMIT 1;
 
--- name: GetUsers :many
+-- name: ListUsers :many
 SELECT u.id, u.username, u.first_name, u.last_name
 FROM users u
 ORDER BY u.username

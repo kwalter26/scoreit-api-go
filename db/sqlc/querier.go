@@ -21,10 +21,10 @@ type Querier interface {
 	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
-	GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersRow, error)
 	ListTeamMembers(ctx context.Context, arg ListTeamMembersParams) ([]ListTeamMembersRow, error)
 	ListTeams(ctx context.Context, arg ListTeamsParams) ([]Team, error)
 	ListTeamsOfUser(ctx context.Context, arg ListTeamsOfUserParams) ([]ListTeamsOfUserRow, error)
+	ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error)
 	UpdateTeam(ctx context.Context, arg UpdateTeamParams) (Team, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }

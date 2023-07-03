@@ -36,19 +36,19 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
-// AddUserToTeam mocks base method.
-func (m *MockStore) AddUserToTeam(arg0 context.Context, arg1 db.AddUserToTeamParams) (db.UserTeam, error) {
+// AddTeamMember mocks base method.
+func (m *MockStore) AddTeamMember(arg0 context.Context, arg1 db.AddTeamMemberParams) (db.TeamMember, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddTeamMember", arg0, arg1)
-	ret0, _ := ret[0].(db.UserTeam)
+	ret0, _ := ret[0].(db.TeamMember)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// AddUserToTeam indicates an expected call of AddUserToTeam.
-func (mr *MockStoreMockRecorder) AddUserToTeam(arg0, arg1 interface{}) *gomock.Call {
+// AddTeamMember indicates an expected call of AddTeamMember.
+func (mr *MockStoreMockRecorder) AddTeamMember(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTeamMember", reflect.TypeOf((*MockStore)(nil).AddUserToTeam), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTeamMember", reflect.TypeOf((*MockStore)(nil).AddTeamMember), arg0, arg1)
 }
 
 // CreateSession mocks base method.
@@ -184,6 +184,21 @@ func (mr *MockStoreMockRecorder) GetUserByUsername(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockStore)(nil).GetUserByUsername), arg0, arg1)
 }
 
+// ListTeamMembers mocks base method.
+func (m *MockStore) ListTeamMembers(arg0 context.Context, arg1 db.ListTeamMembersParams) ([]db.ListTeamMembersRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeamMembers", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListTeamMembersRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeamMembers indicates an expected call of ListTeamMembers.
+func (mr *MockStoreMockRecorder) ListTeamMembers(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeamMembers", reflect.TypeOf((*MockStore)(nil).ListTeamMembers), arg0, arg1)
+}
+
 // ListTeams mocks base method.
 func (m *MockStore) ListTeams(arg0 context.Context, arg1 db.ListTeamsParams) ([]db.Team, error) {
 	m.ctrl.T.Helper()
@@ -214,19 +229,19 @@ func (mr *MockStoreMockRecorder) ListTeamsOfUser(arg0, arg1 interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeamsOfUser", reflect.TypeOf((*MockStore)(nil).ListTeamsOfUser), arg0, arg1)
 }
 
-// ListUsersOfTeam mocks base method.
-func (m *MockStore) ListUsersOfTeam(arg0 context.Context, arg1 db.ListUsersOfTeamParams) ([]db.ListUsersOfTeamRow, error) {
+// ListUsers mocks base method.
+func (m *MockStore) ListUsers(arg0 context.Context, arg1 db.ListUsersParams) ([]db.ListUsersRow, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListUsersOfTeam", arg0, arg1)
-	ret0, _ := ret[0].([]db.ListUsersOfTeamRow)
+	ret := m.ctrl.Call(m, "ListUsers", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListUsersRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// ListUsersOfTeam indicates an expected call of ListUsersOfTeam.
-func (mr *MockStoreMockRecorder) ListUsersOfTeam(arg0, arg1 interface{}) *gomock.Call {
+// ListUsers indicates an expected call of ListUsers.
+func (mr *MockStoreMockRecorder) ListUsers(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsersOfTeam", reflect.TypeOf((*MockStore)(nil).ListUsersOfTeam), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsers", reflect.TypeOf((*MockStore)(nil).ListUsers), arg0, arg1)
 }
 
 // UpdateTeam mocks base method.

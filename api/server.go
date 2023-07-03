@@ -32,6 +32,8 @@ func (s *Server) setupRouter() {
 	authRoutes.GET("/v1/teams/:id/members", s.ListTeamMembers)
 	authRoutes.GET("/v1/teams/:id", s.GetTeam)
 
+	authRoutes.GET("/v1/players", s.ListUsers)
+
 	s.router = router
 }
 

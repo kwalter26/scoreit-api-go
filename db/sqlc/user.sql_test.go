@@ -80,16 +80,16 @@ func TestQueries_DeleteUser(t *testing.T) {
 	require.Empty(t, user2)
 }
 
-func TestQueries_GetUsers(t *testing.T) {
+func TestQueries_ListUsers(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		createRandomUser(t)
 	}
 
-	arg := GetUsersParams{
+	arg := ListUsersParams{
 		Limit:  5,
 		Offset: 5,
 	}
-	users, err := testQueries.GetUsers(context.Background(), arg)
+	users, err := testQueries.ListUsers(context.Background(), arg)
 	require.NoError(t, err)
 	require.Len(t, users, 5)
 

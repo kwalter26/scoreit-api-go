@@ -140,3 +140,49 @@ func (s *Server) LoginUser(context *gin.Context) {
 
 	context.JSON(200, rsp)
 }
+
+// ListUsersRequest represents a request to list users.
+type ListUsersRequest struct {
+	Limit  int32 `form:"limit"`
+	Offset int32 `form:"offset"`
+}
+
+// UserResponse represents a response from a list users request.
+type UserResponse struct {
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+// ListUsers lists all users.
+func (s *Server) ListUsers(context *gin.Context) {
+	var req ListUsersRequest
+	if err := context.ShouldBindQuery(&req); err != nil {
+		context.JSON(400, helpers.ErrorResponse(err))
+		return
+	}
+
+	arg := db.ListUsersParams{
+		Limit:  req.Limit,
+		Offset: req.Offset,
+	}
+
+	users, err := s.store.ListUsers(context, arg)
+	if err != nil {
+		context.JSON(500, helpers.ErrorResponse(err))
+		return
+	}
+
+	rsp := make([]UserResponse, len(users))
+	for i, user := range users {
+		rsp[i] = UserResponse{
+			ID:        user.ID.String(),
+			Username:  user.Username,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+		}
+	}
+
+	context.JSON(200, rsp)
+}
