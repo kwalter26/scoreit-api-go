@@ -36,7 +36,7 @@ func TestServer_ListTeams(t *testing.T) {
 		{
 			name:       "OK",
 			pageSize:   10,
-			pageNumber: 0,
+			pageNumber: 1,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -115,7 +115,7 @@ func TestServer_ListTeams(t *testing.T) {
 		{
 			name:       "InternalError",
 			pageSize:   10,
-			pageNumber: 0,
+			pageNumber: 1,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -287,7 +287,7 @@ func TestServer_ListTeamMembers(t *testing.T) {
 			name:     "OK",
 			teamID:   team.ID.String(),
 			pageSize: 5,
-			pageID:   0,
+			pageID:   1,
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.ListTeamMembersParams{
 					TeamID: team.ID,
@@ -311,7 +311,7 @@ func TestServer_ListTeamMembers(t *testing.T) {
 			name:     "NoToken",
 			teamID:   team.ID.String(),
 			pageSize: 5,
-			pageID:   0,
+			pageID:   1,
 			buildStubs: func(store *mockdb.MockStore) {
 				// no expectations
 			},
@@ -326,7 +326,7 @@ func TestServer_ListTeamMembers(t *testing.T) {
 			name:     "NoTeamID",
 			teamID:   "",
 			pageSize: 5,
-			pageID:   0,
+			pageID:   1,
 			buildStubs: func(store *mockdb.MockStore) {
 				// no expectations
 			},
@@ -341,7 +341,7 @@ func TestServer_ListTeamMembers(t *testing.T) {
 			name:     "InternalError",
 			teamID:   team.ID.String(),
 			pageSize: 5,
-			pageID:   0,
+			pageID:   1,
 			buildStubs: func(store *mockdb.MockStore) {
 				arg := db.ListTeamMembersParams{
 					TeamID: team.ID,

@@ -143,8 +143,8 @@ func (s *Server) LoginUser(context *gin.Context) {
 
 // ListUsersRequest represents a request to list users.
 type ListUsersRequest struct {
-	Limit  int32 `form:"limit"`
-	Offset int32 `form:"offset"`
+	PageSize int32 `form:"page_size"`
+	PageID   int32 `form:"page_id"`
 }
 
 // UserResponse represents a response from a list users request.
@@ -164,8 +164,8 @@ func (s *Server) ListUsers(context *gin.Context) {
 	}
 
 	arg := db.ListUsersParams{
-		Limit:  req.Limit,
-		Offset: req.Offset,
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
 	users, err := s.store.ListUsers(context, arg)

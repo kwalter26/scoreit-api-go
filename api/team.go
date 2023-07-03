@@ -11,7 +11,7 @@ import (
 // ListTeamsRequest represents a request to list teams.
 type ListTeamsRequest struct {
 	PageSize int32 `form:"page_size,default=5" binding:"max=100,min=1"`
-	PageId   int32 `form:"page_id,default=0" binding:"min=0"`
+	PageID   int32 `form:"page_id,default=1" binding:"min=1"`
 }
 
 // TeamResponse represents a response from a team request.
@@ -29,7 +29,7 @@ func (s *Server) ListTeams(context *gin.Context) {
 
 	arg := db.ListTeamsParams{
 		Limit:  req.PageSize,
-		Offset: req.PageId,
+		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
 	teams, err := s.store.ListTeams(context, arg)
@@ -38,7 +38,7 @@ func (s *Server) ListTeams(context *gin.Context) {
 		return
 	}
 
-	var list []TeamResponse
+	var list = make([]TeamResponse, 0, len(teams))
 	for _, team := range teams {
 		list = append(list, NewTeamResponse(team))
 	}
@@ -158,7 +158,7 @@ type ListTeamMembersRequest struct {
 // ListTeamMembersRequestQuery represents a request to list team members.
 type ListTeamMembersRequestQuery struct {
 	PageSize int32 `form:"page_size,default=5" binding:"max=100,min=1"`
-	PageId   int32 `form:"page_id,default=0" binding:"min=0"`
+	PageId   int32 `form:"page_id,default=1" binding:"min=1"`
 }
 
 // ListTeamMembers lists team members.
@@ -179,8 +179,8 @@ func (s *Server) ListTeamMembers(context *gin.Context) {
 
 	arg := db.ListTeamMembersParams{
 		TeamID: id,
-		Limit:  query.PageSize,
-		Offset: query.PageId,
+		Limit:  query.PageSize * (query.PageId),
+		Offset: query.PageId - 1,
 	}
 
 	members, err := s.store.ListTeamMembers(context, arg)
