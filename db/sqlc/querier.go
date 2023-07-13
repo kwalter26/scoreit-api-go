@@ -12,6 +12,7 @@ import (
 
 type Querier interface {
 	AddTeamMember(ctx context.Context, arg AddTeamMemberParams) (TeamMember, error)
+	CreateGame(ctx context.Context, arg CreateGameParams) (Game, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTeam(ctx context.Context, name string) (Team, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
