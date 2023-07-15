@@ -14,3 +14,9 @@ SELECT *
 FROM sessions
 WHERE id = $1
 LIMIT 1;
+
+-- name: UpdateSession :one
+UPDATE sessions
+SET is_blocked = $2
+WHERE id = $1
+RETURNING *;

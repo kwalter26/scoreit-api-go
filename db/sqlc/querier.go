@@ -26,6 +26,7 @@ type Querier interface {
 	ListTeams(ctx context.Context, arg ListTeamsParams) ([]Team, error)
 	ListTeamsOfUser(ctx context.Context, arg ListTeamsOfUserParams) ([]ListTeamsOfUserRow, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error)
+	UpdateSession(ctx context.Context, arg UpdateSessionParams) (Session, error)
 	UpdateTeam(ctx context.Context, arg UpdateTeamParams) (Team, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }

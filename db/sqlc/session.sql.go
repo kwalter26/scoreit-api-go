@@ -80,3 +80,31 @@ func (q *Queries) GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	)
 	return i, err
 }
+
+const updateSession = `-- name: UpdateSession :one
+UPDATE sessions
+SET is_blocked = $2
+WHERE id = $1
+RETURNING id, user_id, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
+`
+
+type UpdateSessionParams struct {
+	ID        uuid.UUID `json:"id"`
+	IsBlocked bool      `json:"is_blocked"`
+}
+
+func (q *Queries) UpdateSession(ctx context.Context, arg UpdateSessionParams) (Session, error) {
+	row := q.db.QueryRowContext(ctx, updateSession, arg.ID, arg.IsBlocked)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.RefreshToken,
+		&i.UserAgent,
+		&i.ClientIp,
+		&i.IsBlocked,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
