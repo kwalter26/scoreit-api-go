@@ -7,6 +7,8 @@ import (
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
+	"github.com/lib/pq"
+	"net/http"
 	"time"
 )
 
@@ -21,12 +23,12 @@ type CreateUserRequest struct {
 
 // CreateUserResponse represents a response from a create user request.
 type CreateUserResponse struct {
-	Username          string `json:"username"`
-	FirstName         string `json:"first_name"`
-	LastName          string `json:"last_name"`
-	Email             string `json:"email"`
-	PasswordChangedAt string `json:"password_changed_at"`
-	CreatedAt         string `json:"created_at"`
+	Username          string    `json:"username"`
+	FirstName         string    `json:"first_name"`
+	LastName          string    `json:"last_name"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
 }
 
 // NewUserResponse creates a new CreateUserResponse from a db.User.
@@ -36,8 +38,8 @@ func NewUserResponse(user db.User) CreateUserResponse {
 		FirstName:         user.FirstName,
 		LastName:          user.LastName,
 		Email:             user.Email,
-		PasswordChangedAt: user.PasswordChangedAt.String(),
-		CreatedAt:         user.CreatedAt.String(),
+		PasswordChangedAt: user.PasswordChangedAt,
+		CreatedAt:         user.CreatedAt,
 	}
 }
 
@@ -60,6 +62,13 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 
 	user, err := s.store.CreateUser(context, arg)
 	if err != nil {
+		if pgErr, err := err.(*pq.Error); err {
+			switch pgErr.Code.Name() {
+			case "unique_violation":
+				context.JSON(400, helpers.ErrorResponse(pgErr))
+				return
+			}
+		}
 		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
@@ -95,27 +104,27 @@ func (s *Server) LoginUser(context *gin.Context) {
 	user, err := s.store.GetUserByUsername(context, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(400, helpers.ErrorResponse(err))
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	if err := security.CheckPassword(req.Password, user.HashedPassword); err != nil {
-		context.JSON(401, helpers.ErrorResponse(err))
+		context.JSON(http.StatusUnauthorized, helpers.ErrorResponse(err))
 		return
 	}
 
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.AccessTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.RefreshTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
@@ -143,8 +152,8 @@ func (s *Server) LoginUser(context *gin.Context) {
 
 // ListUsersRequest represents a request to list users.
 type ListUsersRequest struct {
-	PageSize int32 `form:"page_size"`
-	PageID   int32 `form:"page_id"`
+	PageSize int32 `form:"page_size" binding:"required,min=1,max=25"`
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
 }
 
 // UserResponse represents a response from a list users request.
