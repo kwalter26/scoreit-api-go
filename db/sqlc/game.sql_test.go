@@ -40,11 +40,11 @@ func createRandomGame(t *testing.T, homeTeam *Team, awayTeam *Team) Game {
 	return game
 }
 
-func TestQueries_CreateGame(t *testing.T) {
+func TestQueriesCreateGame(t *testing.T) {
 	createRandomGame(t, nil, nil)
 }
 
-func TestQueries_GetGame(t *testing.T) {
+func TestQueriesGetGame(t *testing.T) {
 	game1 := createRandomGame(t, nil, nil)
 	game2, err := testQueries.GetGame(context.Background(), game1.ID)
 	require.NoError(t, err)
@@ -59,7 +59,7 @@ func TestQueries_GetGame(t *testing.T) {
 	require.WithinDuration(t, game1.UpdatedAt, game2.UpdatedAt, time.Second)
 }
 
-func TestQueries_GetGames(t *testing.T) {
+func TestQueriesGetGames(t *testing.T) {
 	games := make([]Game, 0)
 	team := createRandomTeam(t)
 	for i := 0; i < 2; i++ {
@@ -90,8 +90,8 @@ func TestQueries_GetGames(t *testing.T) {
 	}
 }
 
-// TestQueries_ListGamesWithAwayTeamId tests the ListGames query with an away team id
-func TestQueries_ListGamesWithAwayTeamId(t *testing.T) {
+// TestQueriesListGamesWithAwayTeamId tests the ListGames query with an away team id
+func TestQueriesListGamesWithAwayTeamId(t *testing.T) {
 	games := make([]Game, 0)
 	team := createRandomTeam(t)
 	for i := 0; i < 2; i++ {
@@ -122,7 +122,7 @@ func TestQueries_ListGamesWithAwayTeamId(t *testing.T) {
 	}
 }
 
-func TestQueries_GetGamesWithoutTeamId(t *testing.T) {
+func TestQueriesGetGamesWithoutTeamId(t *testing.T) {
 	games := make([]Game, 0)
 	for i := 0; i < 10; i++ {
 		games = append(games, createRandomGame(t, nil, nil))
