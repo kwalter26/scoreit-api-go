@@ -71,6 +71,8 @@ Table game as G {
   away_team_id uuid [ref: > T.id, not null]
   home_score bigint [not null]
   away_score bigint [not null]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
 }
 
 Table inning as I {

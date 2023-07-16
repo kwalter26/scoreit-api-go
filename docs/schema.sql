@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-07-04T16:17:56.319Z
+-- Generated at: 2023-07-15T03:40:41.620Z
 
 CREATE TABLE "users" (
   "id" uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
@@ -43,15 +43,16 @@ CREATE TABLE "team_members"
     "updated_at"       timestamptz      NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "sessions" (
-                            "id"            uuid PRIMARY KEY,
-                            "user_id"       uuid        NOT NULL,
-                            "refresh_token" varchar     NOT NULL,
-                            "user_agent"    varchar     NOT NULL,
-                            "client_ip"     varchar     NOT NULL,
-                            "is_blocked"    boolean     NOT NULL DEFAULT false,
-                            "expires_at"    timestamptz,
-                            "created_at"    timestamptz NOT NULL DEFAULT (now())
+CREATE TABLE "sessions"
+(
+    "id"            uuid PRIMARY KEY,
+    "user_id"       uuid        NOT NULL,
+    "refresh_token" varchar     NOT NULL,
+    "user_agent"    varchar     NOT NULL,
+    "client_ip"     varchar     NOT NULL,
+    "is_blocked"    boolean     NOT NULL DEFAULT false,
+    "expires_at"    timestamptz,
+    "created_at"    timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "game"
@@ -60,7 +61,9 @@ CREATE TABLE "game"
     "home_team_id" uuid             NOT NULL,
     "away_team_id" uuid             NOT NULL,
     "home_score"   bigint           NOT NULL,
-    "away_score"   bigint           NOT NULL
+    "away_score"   bigint           NOT NULL,
+    "created_at"   timestamptz      NOT NULL DEFAULT (now()),
+    "updated_at"   timestamptz      NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "inning"

@@ -14,7 +14,7 @@ import (
 const createGame = `-- name: CreateGame :one
 INSERT INTO game (home_team_id, away_team_id, home_score, away_score)
 VALUES ($1, $2, $3, $4)
-RETURNING id, home_team_id, away_team_id, home_score, away_score
+RETURNING id, home_team_id, away_team_id, home_score, away_score, created_at, updated_at
 `
 
 type CreateGameParams struct {
@@ -38,6 +38,109 @@ func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (Game, e
 		&i.AwayTeamID,
 		&i.HomeScore,
 		&i.AwayScore,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getGame = `-- name: GetGame :one
+SELECT id, home_team_id, away_team_id, home_score, away_score, created_at, updated_at
+FROM game
+WHERE id = $1
+`
+
+func (q *Queries) GetGame(ctx context.Context, id uuid.UUID) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getGame, id)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.HomeTeamID,
+		&i.AwayTeamID,
+		&i.HomeScore,
+		&i.AwayScore,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const listGames = `-- name: ListGames :many
+SELECT id, home_team_id, away_team_id, home_score, away_score, created_at, updated_at
+FROM game g
+WHERE ($3::UUID IS NULL OR g.home_team_id = $3::UUID)
+  AND ($4::UUID IS NULL OR g.away_team_id = $4::UUID)
+ORDER BY g.created_at DESC
+LIMIT $1 OFFSET $2
+`
+
+type ListGamesParams struct {
+	Limit      int32         `json:"limit"`
+	Offset     int32         `json:"offset"`
+	HomeTeamID uuid.NullUUID `json:"home_team_id"`
+	AwayTeamID uuid.NullUUID `json:"away_team_id"`
+}
+
+func (q *Queries) ListGames(ctx context.Context, arg ListGamesParams) ([]Game, error) {
+	rows, err := q.db.QueryContext(ctx, listGames,
+		arg.Limit,
+		arg.Offset,
+		arg.HomeTeamID,
+		arg.AwayTeamID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Game{}
+	for rows.Next() {
+		var i Game
+		if err := rows.Scan(
+			&i.ID,
+			&i.HomeTeamID,
+			&i.AwayTeamID,
+			&i.HomeScore,
+			&i.AwayScore,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateGame = `-- name: UpdateGame :one
+UPDATE game
+SET home_score = $1, away_score = $2, updated_at = NOW()
+WHERE id = $3
+RETURNING id, home_team_id, away_team_id, home_score, away_score, created_at, updated_at
+`
+
+type UpdateGameParams struct {
+	HomeScore int64     `json:"home_score"`
+	AwayScore int64     `json:"away_score"`
+	ID        uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateGame(ctx context.Context, arg UpdateGameParams) (Game, error) {
+	row := q.db.QueryRowContext(ctx, updateGame, arg.HomeScore, arg.AwayScore, arg.ID)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.HomeTeamID,
+		&i.AwayTeamID,
+		&i.HomeScore,
+		&i.AwayScore,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

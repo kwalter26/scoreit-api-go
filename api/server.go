@@ -37,6 +37,11 @@ func (s *Server) setupRouter() {
 
 	authRoutes.GET("/v1/players", s.ListUsers)
 
+	authRoutes.POST("/v1/games", s.CreateGame)
+	authRoutes.GET("/v1/games", s.ListGames)
+	authRoutes.GET("/v1/games/:id", s.GetGame)
+	authRoutes.PUT("/v1/games/:id", s.UpdateGame)
+
 	s.router = router
 }
 
