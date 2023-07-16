@@ -151,8 +151,8 @@ func (s *Server) LoginUser(context *gin.Context) {
 
 // ListUsersRequest represents a request to list users.
 type ListUsersRequest struct {
-	PageSize int32 `form:"page_size"`
-	PageID   int32 `form:"page_id"`
+	PageSize int32 `form:"page_size" binding:"required,min=1,max=25"`
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
 }
 
 // UserResponse represents a response from a list users request.
