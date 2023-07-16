@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
@@ -63,8 +64,8 @@ func EqCreateUserParamsMatcher(arg db.CreateUserParams, password string) gomock.
 	return eqCreateUserParamsMatcher{arg: arg, password: password}
 }
 
-func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, authorizationType string, username string, duration time.Duration) {
-	createToken, payload, err := tokenMaker.CreateToken(username, duration)
+func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, authorizationType string, u uuid.UUID, duration time.Duration) {
+	createToken, payload, err := tokenMaker.CreateToken(u, duration)
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 
