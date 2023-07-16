@@ -101,7 +101,9 @@ func TestServerCreateGame(t *testing.T) {
 			buildStubs: func(store *mockdb.MockStore) {
 				// No expectations
 			},
-			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				// No token
+			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
@@ -243,7 +245,9 @@ func TestServerListGames(t *testing.T) {
 			buildStubs: func(store *mockdb.MockStore) {
 				// No expectations
 			},
-			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				// No token
+			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
@@ -474,7 +478,9 @@ func TestServerGetGame(t *testing.T) {
 					GetGame(gomock.Any(), gomock.Eq(game.ID)).
 					Times(0)
 			},
-			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				// Don't add authorization header to the request
+			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
