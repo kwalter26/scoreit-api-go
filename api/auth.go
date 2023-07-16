@@ -191,6 +191,10 @@ func (s *Server) LogoutUser(context *gin.Context) {
 		IsBlocked: true,
 	})
 	if err != nil {
+		if err == sql.ErrNoRows {
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
+			return
+		}
 		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
