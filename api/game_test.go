@@ -22,7 +22,7 @@ import (
 	"time"
 )
 
-func TestServer_CreateGame(t *testing.T) {
+func TestServerCreateGame(t *testing.T) {
 
 	homeTeam := createRandomTeam()
 	awayTeam := createRandomTeam()
@@ -165,7 +165,7 @@ func TestServer_CreateGame(t *testing.T) {
 	}
 }
 
-func TestServer_ListGames(t *testing.T) {
+func TestServerListGames(t *testing.T) {
 
 	user, _ := createRandomUser(t)
 	n := 10
@@ -393,7 +393,7 @@ func TestServer_ListGames(t *testing.T) {
 	}
 }
 
-func TestServer_GetGame(t *testing.T) {
+func TestServerGetGame(t *testing.T) {
 	user, _ := createRandomUser(t)
 	game, _, _ := createRandomGame()
 
@@ -507,7 +507,7 @@ func TestServer_GetGame(t *testing.T) {
 	}
 }
 
-func TestServer_UpdateGame(t *testing.T) {
+func TestServerUpdateGame(t *testing.T) {
 	user, _ := createRandomUser(t)
 	game, _, _ := createRandomGame()
 	updateGame := game
