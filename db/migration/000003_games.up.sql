@@ -4,7 +4,9 @@ CREATE TABLE "game"
     "home_team_id" uuid             NOT NULL,
     "away_team_id" uuid             NOT NULL,
     "home_score"   bigint           NOT NULL,
-    "away_score"   bigint           NOT NULL
+    "away_score"   bigint           NOT NULL,
+    "created_at"   timestamptz      NOT NULL DEFAULT (now()),
+    "updated_at"   timestamptz      NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "inning"

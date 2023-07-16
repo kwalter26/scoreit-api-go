@@ -29,6 +29,8 @@ type Game struct {
 	AwayTeamID uuid.UUID `json:"away_team_id"`
 	HomeScore  int64     `json:"home_score"`
 	AwayScore  int64     `json:"away_score"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type GameParticipant struct {

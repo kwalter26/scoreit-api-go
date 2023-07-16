@@ -97,3 +97,19 @@ func TestQueries_ListUsers(t *testing.T) {
 		require.NotEmpty(t, user)
 	}
 }
+
+func TestQueries_UpdateGame(t *testing.T) {
+	game := createRandomGame(t, nil, nil)
+
+	arg := UpdateGameParams{
+		ID:        game.ID,
+		HomeScore: 2,
+		AwayScore: 1,
+	}
+	updatedGame, err := testQueries.UpdateGame(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, updatedGame)
+
+	require.Equal(t, arg.HomeScore, updatedGame.HomeScore)
+	require.Equal(t, arg.AwayScore, updatedGame.AwayScore)
+}
