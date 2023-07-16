@@ -8,6 +8,7 @@ import (
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/lib/pq"
+	"net/http"
 	"time"
 )
 
@@ -103,27 +104,27 @@ func (s *Server) LoginUser(context *gin.Context) {
 	user, err := s.store.GetUserByUsername(context, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(400, helpers.ErrorResponse(err))
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	if err := security.CheckPassword(req.Password, user.HashedPassword); err != nil {
-		context.JSON(401, helpers.ErrorResponse(err))
+		context.JSON(http.StatusUnauthorized, helpers.ErrorResponse(err))
 		return
 	}
 
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.AccessTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.Username, s.config.RefreshTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
