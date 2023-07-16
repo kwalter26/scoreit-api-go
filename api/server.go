@@ -24,6 +24,16 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/users", s.CreateNewUser)
 	router.POST("/api/v1/login", s.LoginUser)
 
+	authRoutes := router.Group("/api/").Use(middleware.AuthMiddleware(s.tokenMaker))
+
+	authRoutes.GET("/v1/teams", s.ListTeams)
+	authRoutes.POST("/v1/teams", s.CreateTeam)
+	authRoutes.PUT("/v1/teams/:id/members/:user_id", s.AddTeamMember)
+	authRoutes.GET("/v1/teams/:id/members", s.ListTeamMembers)
+	authRoutes.GET("/v1/teams/:id", s.GetTeam)
+
+	authRoutes.GET("/v1/players", s.ListUsers)
+
 	s.router = router
 }
 
@@ -41,8 +51,4 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (s *Server) Start(address string) error {
 	return s.router.Run(address)
-}
-
-func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
 }

@@ -34,22 +34,23 @@ CREATE TABLE "teams"
     "updated_at" timestamptz      NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "user_teams"
+CREATE TABLE "team_members"
 (
     "id"               uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "number"           int              NOT NULL,
+    "number"           bigint           NOT NULL,
     "primary_position" varchar          NOT NULL,
     "user_id"          uuid             NOT NULL,
     "team_id"          uuid             NOT NULL,
-    "created_at"       timestamptz      NOT NULL DEFAULT (now())
+    "created_at"       timestamptz      NOT NULL DEFAULT (now()),
+    "updated_at"       timestamptz      NOT NULL DEFAULT (now())
 );
 
 CREATE UNIQUE INDEX ON "users" ("username");
 
 CREATE UNIQUE INDEX ON "teams" ("name");
 
-ALTER TABLE "user_teams"
+ALTER TABLE "team_members"
     ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "user_teams"
+ALTER TABLE "team_members"
     ADD FOREIGN KEY ("team_id") REFERENCES "teams" ("id");

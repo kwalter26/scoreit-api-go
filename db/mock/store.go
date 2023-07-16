@@ -36,6 +36,36 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 	return m.recorder
 }
 
+// AddTeamMember mocks base method.
+func (m *MockStore) AddTeamMember(arg0 context.Context, arg1 db.AddTeamMemberParams) (db.TeamMember, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddTeamMember", arg0, arg1)
+	ret0, _ := ret[0].(db.TeamMember)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddTeamMember indicates an expected call of AddTeamMember.
+func (mr *MockStoreMockRecorder) AddTeamMember(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTeamMember", reflect.TypeOf((*MockStore)(nil).AddTeamMember), arg0, arg1)
+}
+
+// CreateSession mocks base method.
+func (m *MockStore) CreateSession(arg0 context.Context, arg1 db.CreateSessionParams) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSession indicates an expected call of CreateSession.
+func (mr *MockStoreMockRecorder) CreateSession(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSession", reflect.TypeOf((*MockStore)(nil).CreateSession), arg0, arg1)
+}
+
 // CreateTeam mocks base method.
 func (m *MockStore) CreateTeam(arg0 context.Context, arg1 string) (db.Team, error) {
 	m.ctrl.T.Helper()
@@ -94,6 +124,21 @@ func (mr *MockStoreMockRecorder) DeleteUser(arg0, arg1 interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*MockStore)(nil).DeleteUser), arg0, arg1)
 }
 
+// GetSession mocks base method.
+func (m *MockStore) GetSession(arg0 context.Context, arg1 uuid.UUID) (db.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSession", arg0, arg1)
+	ret0, _ := ret[0].(db.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSession indicates an expected call of GetSession.
+func (mr *MockStoreMockRecorder) GetSession(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockStore)(nil).GetSession), arg0, arg1)
+}
+
 // GetTeam mocks base method.
 func (m *MockStore) GetTeam(arg0 context.Context, arg1 uuid.UUID) (db.Team, error) {
 	m.ctrl.T.Helper()
@@ -139,6 +184,21 @@ func (mr *MockStoreMockRecorder) GetUserByUsername(arg0, arg1 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockStore)(nil).GetUserByUsername), arg0, arg1)
 }
 
+// ListTeamMembers mocks base method.
+func (m *MockStore) ListTeamMembers(arg0 context.Context, arg1 db.ListTeamMembersParams) ([]db.ListTeamMembersRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeamMembers", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListTeamMembersRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeamMembers indicates an expected call of ListTeamMembers.
+func (mr *MockStoreMockRecorder) ListTeamMembers(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeamMembers", reflect.TypeOf((*MockStore)(nil).ListTeamMembers), arg0, arg1)
+}
+
 // ListTeams mocks base method.
 func (m *MockStore) ListTeams(arg0 context.Context, arg1 db.ListTeamsParams) ([]db.Team, error) {
 	m.ctrl.T.Helper()
@@ -152,6 +212,36 @@ func (m *MockStore) ListTeams(arg0 context.Context, arg1 db.ListTeamsParams) ([]
 func (mr *MockStoreMockRecorder) ListTeams(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeams", reflect.TypeOf((*MockStore)(nil).ListTeams), arg0, arg1)
+}
+
+// ListTeamsOfUser mocks base method.
+func (m *MockStore) ListTeamsOfUser(arg0 context.Context, arg1 db.ListTeamsOfUserParams) ([]db.ListTeamsOfUserRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListTeamsOfUser", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListTeamsOfUserRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTeamsOfUser indicates an expected call of ListTeamsOfUser.
+func (mr *MockStoreMockRecorder) ListTeamsOfUser(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTeamsOfUser", reflect.TypeOf((*MockStore)(nil).ListTeamsOfUser), arg0, arg1)
+}
+
+// ListUsers mocks base method.
+func (m *MockStore) ListUsers(arg0 context.Context, arg1 db.ListUsersParams) ([]db.ListUsersRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListUsers", arg0, arg1)
+	ret0, _ := ret[0].([]db.ListUsersRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListUsers indicates an expected call of ListUsers.
+func (mr *MockStoreMockRecorder) ListUsers(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListUsers", reflect.TypeOf((*MockStore)(nil).ListUsers), arg0, arg1)
 }
 
 // UpdateTeam mocks base method.
