@@ -1,13 +1,18 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
+	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
+	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/stretchr/testify/require"
+	"net/http"
 	"os"
 	"reflect"
 	"testing"
@@ -56,4 +61,20 @@ func (e eqCreateUserParamsMatcher) String() string {
 
 func EqCreateUserParamsMatcher(arg db.CreateUserParams, password string) gomock.Matcher {
 	return eqCreateUserParamsMatcher{arg: arg, password: password}
+}
+
+func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, authorizationType string, username string, duration time.Duration) {
+	createToken, payload, err := tokenMaker.CreateToken(username, duration)
+	require.NoError(t, err)
+	require.NotEmpty(t, payload)
+
+	authorizationHeader := authorizationType + " " + createToken
+	request.Header.Set(middleware.AuthorizationHeaderKey, authorizationHeader)
+}
+
+func buildJsonRequest(t *testing.T, body gin.H) (bytes.Buffer, error) {
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(body)
+	require.NoError(t, err)
+	return buf, err
 }

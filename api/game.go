@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
+	"github.com/lib/pq"
 )
 
 // CreateGameRequest defines the request body for NewGameHandler.
@@ -41,6 +42,13 @@ func (s *Server) CreateGame(context *gin.Context) {
 		AwayScore:  0,
 	})
 	if err != nil {
+		if pgErr, err := err.(*pq.Error); err {
+			switch pgErr.Code.Name() {
+			case "unique_violation":
+				context.JSON(400, helpers.ErrorResponse(pgErr))
+				return
+			}
+		}
 		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
