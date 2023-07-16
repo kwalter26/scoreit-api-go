@@ -39,27 +39,27 @@ func (s *Server) LoginUser(context *gin.Context) {
 	user, err := s.store.GetUserByUsername(context, req.Username)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(400, helpers.ErrorResponse(err))
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	if err := security.CheckPassword(req.Password, user.HashedPassword); err != nil {
-		context.JSON(401, helpers.ErrorResponse(err))
+		context.JSON(http.StatusUnauthorized, helpers.ErrorResponse(err))
 		return
 	}
 
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.ID, s.config.AccessTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
 	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.ID, s.config.RefreshTokenDuration)
 	if err != nil {
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
@@ -82,7 +82,7 @@ func (s *Server) LoginUser(context *gin.Context) {
 		User:                  NewUserResponse(user),
 	}
 
-	context.JSON(200, rsp)
+	context.JSON(http.StatusOK, rsp)
 }
 
 // RefreshTokenRequest represents a request to refresh a token.
