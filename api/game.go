@@ -7,6 +7,7 @@ import (
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/lib/pq"
+	"net/http"
 )
 
 // CreateGameRequest defines the request body for NewGameHandler.
@@ -66,8 +67,8 @@ func (s *Server) CreateGame(context *gin.Context) {
 type ListGamesRequest struct {
 	HomeTeamID string `form:"home_team_id" binding:"omitempty,uuid"`
 	AwayTeamID string `form:"away_team_id" binding:"omitempty,uuid"`
-	Limit      int32  `form:"limit"`
-	Offset     int32  `form:"offset"`
+	PageSize   int32  `form:"page_size" binding:"omitempty,number,min=1,max=10"`
+	PageID     int32  `form:"page_id" binding:"omitempty,number,min=1"`
 }
 
 // ListGames lists all games.
@@ -82,23 +83,15 @@ func (s *Server) ListGames(context *gin.Context) {
 	awayID := uuid.Nil
 	var err error
 	if req.HomeTeamID != "" {
-		homeID, err = uuid.Parse(req.HomeTeamID)
-		if err != nil {
-			context.JSON(400, helpers.ErrorResponse(err))
-			return
-		}
+		homeID = uuid.MustParse(req.HomeTeamID)
 	}
 	if req.AwayTeamID != "" {
-		awayID, err = uuid.Parse(req.AwayTeamID)
-		if err != nil {
-			context.JSON(400, helpers.ErrorResponse(err))
-			return
-		}
+		awayID = uuid.MustParse(req.AwayTeamID)
 	}
 
 	games, err := s.store.ListGames(context, db.ListGamesParams{
-		Limit:      req.Limit,
-		Offset:     req.Offset,
+		Limit:      req.PageSize,
+		Offset:     (req.PageID - 1) * req.PageSize,
 		HomeTeamID: uuid.NullUUID{UUID: homeID, Valid: homeID != uuid.Nil},
 		AwayTeamID: uuid.NullUUID{UUID: awayID, Valid: awayID != uuid.Nil},
 	})
@@ -136,6 +129,10 @@ func (s *Server) GetGame(context *gin.Context) {
 
 	game, err := s.store.GetGame(context, id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			context.JSON(404, helpers.ErrorResponse(err))
+			return
+		}
 		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}
@@ -158,15 +155,6 @@ type UpdateGameRequest struct {
 type UpdateGameBody struct {
 	HomeScore int64 `json:"home_score"`
 	AwayScore int64 `json:"away_score"`
-}
-
-// UpdateGameResponse defines the response body for UpdateGameHandler.
-type UpdateGameResponse struct {
-	ID         string `json:"id"`
-	HomeTeamID string `json:"home_team_id"`
-	AwayTeamID string `json:"away_team_id"`
-	HomeScore  int64  `json:"home_score"`
-	AwayScore  int64  `json:"away_score"`
 }
 
 // UpdateGame updates a game by ID.
@@ -192,18 +180,12 @@ func (s *Server) UpdateGame(context *gin.Context) {
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(404, helpers.ErrorResponse(err))
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
-		context.JSON(500, helpers.ErrorResponse(err))
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
-	context.JSON(200, UpdateGameResponse{
-		ID:         game.ID.String(),
-		HomeTeamID: game.HomeTeamID.String(),
-		AwayTeamID: game.AwayTeamID.String(),
-		HomeScore:  game.HomeScore,
-		AwayScore:  game.AwayScore,
-	})
+	context.JSON(http.StatusOK, game)
 }
