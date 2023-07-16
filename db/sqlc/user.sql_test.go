@@ -45,7 +45,7 @@ func TestQueriesGetUser(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, user2)
 
-	require.Equal(t, user.ID, user2.Username)
+	require.Equal(t, user.Username, user2.Username)
 	require.Equal(t, user.FirstName, user2.FirstName)
 	require.Equal(t, user.LastName, user2.LastName)
 }
@@ -63,7 +63,7 @@ func TestQueriesUpdateUser(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, updatedUser)
 
-	require.Equal(t, arg.Username.String, updatedUser.ID)
+	require.Equal(t, arg.Username.String, updatedUser.Username)
 	require.Equal(t, arg.FirstName.String, updatedUser.FirstName)
 	require.Equal(t, arg.LastName.String, updatedUser.LastName)
 }

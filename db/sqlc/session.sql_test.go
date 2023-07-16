@@ -17,7 +17,10 @@ func createRandomSession(t *testing.T) Session {
 	// Create refreshToken
 	maker, err := token.NewPasetoMaker(util.RandomString(32))
 
-	refreshToken, p, err := maker.CreateToken(user.Username, 4*time.Minute)
+	u, err := uuid.NewRandom()
+	require.NoError(t, err)
+
+	refreshToken, p, err := maker.CreateToken(u, 4*time.Minute)
 
 	arg := CreateSessionParams{
 		ID:           uuid.New(),
