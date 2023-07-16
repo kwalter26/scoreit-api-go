@@ -64,3 +64,53 @@ Table sessions {
   expires_at timestamptz
   created_at timestamptz [not null, default: `now()`]
 }
+
+Table game as G {
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
+  home_team_id uuid [ref: > T.id, not null]
+  away_team_id uuid [ref: > T.id, not null]
+  home_score bigint [not null]
+  away_score bigint [not null]
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+}
+
+Table inning as I {
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
+  game_id uuid [ref: > G.id]
+  number bigint [not null]
+  home_runs bigint [not null]
+  home_hits bigint [not null]
+  home_errors bigint [not null]
+  home_last_bat uuid [ref: > GP.id, not null]
+  away_runs bigint [not null]
+  away_hits bigint [not null]
+  away_errors bigint [not null]
+  away_last_bat uuid [ref: > GP.id, not null]
+}
+
+Table atbat as AB {
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
+  inning_id uuid [ref: > I.id]
+  batter_id uuid [ref: > GP.id]
+  pitcher_id uuid [ref: > GP.id]
+  balls bigint [not null]
+  strikes bigint [not null]
+  init_bases bigint [not null]
+  total_bases bigint [not null]
+  out boolean [not null]
+}
+
+Table game_participant as GP {
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
+  game_id uuid [ref: > G.id]
+  player_id uuid [ref: > U.id]
+  home_team boolean [not null]
+  bat_position bigint [not null]
+}
+
+Table game_stat as GS {
+  id uuid [pk, default: `uuid_generate_v4()`, not null]
+  atbat_id uuid [ref: > AB.id]
+  type varchar
+}

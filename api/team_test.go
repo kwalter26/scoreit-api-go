@@ -821,15 +821,6 @@ func randomTeam() db.Team {
 	}
 }
 
-func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, authorizationType string, username string, duration time.Duration) {
-	createToken, payload, err := tokenMaker.CreateToken(username, duration)
-	require.NoError(t, err)
-	require.NotEmpty(t, payload)
-
-	authorizationHeader := authorizationType + " " + createToken
-	request.Header.Set(middleware.AuthorizationHeaderKey, authorizationHeader)
-}
-
 func createRandomUser(t *testing.T) (db.User, string) {
 	password := util.RandomString(6)
 	hashedPassword, err := security.HashPassword(password)

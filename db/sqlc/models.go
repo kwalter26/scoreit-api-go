@@ -11,6 +11,56 @@ import (
 	"github.com/google/uuid"
 )
 
+type Atbat struct {
+	ID         uuid.UUID     `json:"id"`
+	InningID   uuid.NullUUID `json:"inning_id"`
+	BatterID   uuid.NullUUID `json:"batter_id"`
+	PitcherID  uuid.NullUUID `json:"pitcher_id"`
+	Balls      int64         `json:"balls"`
+	Strikes    int64         `json:"strikes"`
+	InitBases  int64         `json:"init_bases"`
+	TotalBases int64         `json:"total_bases"`
+	Out        bool          `json:"out"`
+}
+
+type Game struct {
+	ID         uuid.UUID `json:"id"`
+	HomeTeamID uuid.UUID `json:"home_team_id"`
+	AwayTeamID uuid.UUID `json:"away_team_id"`
+	HomeScore  int64     `json:"home_score"`
+	AwayScore  int64     `json:"away_score"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+type GameParticipant struct {
+	ID          uuid.UUID     `json:"id"`
+	GameID      uuid.NullUUID `json:"game_id"`
+	PlayerID    uuid.NullUUID `json:"player_id"`
+	HomeTeam    bool          `json:"home_team"`
+	BatPosition int64         `json:"bat_position"`
+}
+
+type GameStat struct {
+	ID      uuid.UUID      `json:"id"`
+	AtbatID uuid.NullUUID  `json:"atbat_id"`
+	Type    sql.NullString `json:"type"`
+}
+
+type Inning struct {
+	ID          uuid.UUID     `json:"id"`
+	GameID      uuid.NullUUID `json:"game_id"`
+	Number      int64         `json:"number"`
+	HomeRuns    int64         `json:"home_runs"`
+	HomeHits    int64         `json:"home_hits"`
+	HomeErrors  int64         `json:"home_errors"`
+	HomeLastBat uuid.UUID     `json:"home_last_bat"`
+	AwayRuns    int64         `json:"away_runs"`
+	AwayHits    int64         `json:"away_hits"`
+	AwayErrors  int64         `json:"away_errors"`
+	AwayLastBat uuid.UUID     `json:"away_last_bat"`
+}
+
 type Session struct {
 	ID           uuid.UUID    `json:"id"`
 	UserID       uuid.UUID    `json:"user_id"`
