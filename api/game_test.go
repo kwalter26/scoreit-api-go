@@ -66,7 +66,9 @@ func TestServerCreateGame(t *testing.T) {
 				"home_team_id": "fd",
 				"away_team_id": awayTeam.ID,
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -80,7 +82,9 @@ func TestServerCreateGame(t *testing.T) {
 				"home_team_id": homeTeam.ID,
 				"away_team_id": "fd",
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -94,8 +98,10 @@ func TestServerCreateGame(t *testing.T) {
 				"home_team_id": homeTeam.ID,
 				"away_team_id": awayTeam.ID,
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
-			setupAuth:  func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
@@ -218,7 +224,9 @@ func TestServerListGames(t *testing.T) {
 				pageID:   1,
 				pageSize: -1,
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -232,8 +240,10 @@ func TestServerListGames(t *testing.T) {
 				pageID:   1,
 				pageSize: n,
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
-			setupAuth:  func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
@@ -292,7 +302,9 @@ func TestServerListGames(t *testing.T) {
 				pageSize:   n,
 				homeTeamID: "asdf",
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
@@ -307,7 +319,9 @@ func TestServerListGames(t *testing.T) {
 				pageSize:   n,
 				awayTeamID: "asdf",
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// No expectations
+			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
 				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
 			},
