@@ -7,6 +7,7 @@ import (
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
+	"github.com/lib/pq"
 	"time"
 )
 
@@ -21,12 +22,12 @@ type CreateUserRequest struct {
 
 // CreateUserResponse represents a response from a create user request.
 type CreateUserResponse struct {
-	Username          string `json:"username"`
-	FirstName         string `json:"first_name"`
-	LastName          string `json:"last_name"`
-	Email             string `json:"email"`
-	PasswordChangedAt string `json:"password_changed_at"`
-	CreatedAt         string `json:"created_at"`
+	Username          string    `json:"username"`
+	FirstName         string    `json:"first_name"`
+	LastName          string    `json:"last_name"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
 }
 
 // NewUserResponse creates a new CreateUserResponse from a db.User.
@@ -36,8 +37,8 @@ func NewUserResponse(user db.User) CreateUserResponse {
 		FirstName:         user.FirstName,
 		LastName:          user.LastName,
 		Email:             user.Email,
-		PasswordChangedAt: user.PasswordChangedAt.String(),
-		CreatedAt:         user.CreatedAt.String(),
+		PasswordChangedAt: user.PasswordChangedAt,
+		CreatedAt:         user.CreatedAt,
 	}
 }
 
@@ -60,6 +61,13 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 
 	user, err := s.store.CreateUser(context, arg)
 	if err != nil {
+		if pgErr, err := err.(*pq.Error); err {
+			switch pgErr.Code.Name() {
+			case "unique_violation":
+				context.JSON(400, helpers.ErrorResponse(pgErr))
+				return
+			}
+		}
 		context.JSON(500, helpers.ErrorResponse(err))
 		return
 	}

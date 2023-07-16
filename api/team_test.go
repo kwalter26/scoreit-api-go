@@ -842,6 +842,8 @@ func createRandomUser(t *testing.T) (db.User, string) {
 		LastName:       util.RandomName(),
 		Email:          util.RandomEmail(),
 		HashedPassword: hashedPassword,
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 	return user, password
 }
