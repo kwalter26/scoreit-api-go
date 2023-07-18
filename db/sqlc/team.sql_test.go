@@ -82,3 +82,111 @@ func TestQueries_ListTeams(t *testing.T) {
 		require.NotEmpty(t, team)
 	}
 }
+
+func TestQueries_AddUserToTeam(t *testing.T) {
+	user := createRandomUser(t)
+	team := createRandomTeam(t)
+
+	arg := AddTeamMemberParams{
+		UserID:          user.ID,
+		TeamID:          team.ID,
+		Number:          util.RandomInt(1, 99),
+		PrimaryPosition: string(util.RandomBaseballPosition()),
+	}
+	userTeam, err := testQueries.AddTeamMember(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, userTeam)
+}
+
+func TestQueries_ListUsersInTeam(t *testing.T) {
+
+	team := createRandomTeam(t)
+	var users []struct {
+		user       User
+		teamMember TeamMember
+	}
+	// Create 5 random users
+	for i := 0; i < 5; i++ {
+		user := createRandomUser(t)
+
+		arg := AddTeamMemberParams{
+			UserID:          user.ID,
+			TeamID:          team.ID,
+			Number:          util.RandomInt(1, 99),
+			PrimaryPosition: string(util.RandomBaseballPosition()),
+		}
+		userTeam, err := testQueries.AddTeamMember(context.Background(), arg)
+		require.NoError(t, err)
+		users = append(users, struct {
+			user       User
+			teamMember TeamMember
+		}{user: user, teamMember: userTeam})
+	}
+
+	listedUsers, err := testQueries.ListTeamMembers(context.Background(), ListTeamMembersParams{
+		TeamID: team.ID,
+		Limit:  5,
+		Offset: 0,
+	})
+
+	require.NoError(t, err)
+	require.Len(t, users, 5)
+
+	for _, user := range listedUsers {
+		require.NotEmpty(t, user)
+		for _, u := range users {
+			if user.ID == u.user.ID {
+				require.Equal(t, user.ID, u.user.ID)
+				require.Equal(t, user.FirstName, u.user.FirstName)
+				require.Equal(t, user.LastName, u.user.LastName)
+				require.Equal(t, user.Number, u.teamMember.Number)
+				require.Equal(t, user.PrimaryPosition, u.teamMember.PrimaryPosition)
+				require.Equal(t, user.TeamName, team.Name)
+			}
+		}
+	}
+}
+
+func TestQueries_ListTeamsOfUser(t *testing.T) {
+	user := createRandomUser(t)
+	var teams []struct {
+		team       Team
+		teamMember TeamMember
+	}
+	// Create 5 random teams
+	for i := 0; i < 5; i++ {
+		team := createRandomTeam(t)
+
+		arg := AddTeamMemberParams{
+			UserID:          user.ID,
+			TeamID:          team.ID,
+			Number:          util.RandomInt(1, 99),
+			PrimaryPosition: string(util.RandomBaseballPosition()),
+		}
+		userTeam, err := testQueries.AddTeamMember(context.Background(), arg)
+		require.NoError(t, err)
+		teams = append(teams, struct {
+			team       Team
+			teamMember TeamMember
+		}{team: team, teamMember: userTeam})
+	}
+
+	listedTeams, err := testQueries.ListTeamsOfUser(context.Background(), ListTeamsOfUserParams{
+		UserID: user.ID,
+		Limit:  5,
+		Offset: 0,
+	})
+
+	require.NoError(t, err)
+	require.Len(t, teams, 5)
+
+	for _, team := range listedTeams {
+		require.NotEmpty(t, team)
+		for _, u := range teams {
+			if team.ID == u.team.ID {
+				require.Equal(t, team.ID, u.team.ID)
+				require.Equal(t, team.Name, u.team.Name)
+			}
+		}
+	}
+}

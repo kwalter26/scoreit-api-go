@@ -35,11 +35,11 @@ func createRandomUser(t *testing.T) User {
 	return user
 }
 
-func TestQueries_CreateUser(t *testing.T) {
+func TestQueriesCreateUser(t *testing.T) {
 	createRandomUser(t)
 }
 
-func TestQueries_GetUser(t *testing.T) {
+func TestQueriesGetUser(t *testing.T) {
 	user := createRandomUser(t)
 	user2, err := testQueries.GetUser(context.Background(), user.ID)
 	require.NoError(t, err)
@@ -50,7 +50,7 @@ func TestQueries_GetUser(t *testing.T) {
 	require.Equal(t, user.LastName, user2.LastName)
 }
 
-func TestQueries_UpdateUser(t *testing.T) {
+func TestQueriesUpdateUser(t *testing.T) {
 	user := createRandomUser(t)
 
 	arg := UpdateUserParams{
@@ -68,7 +68,7 @@ func TestQueries_UpdateUser(t *testing.T) {
 	require.Equal(t, arg.LastName.String, updatedUser.LastName)
 }
 
-func TestQueries_DeleteUser(t *testing.T) {
+func TestQueriesDeleteUser(t *testing.T) {
 	user := createRandomUser(t)
 
 	err := testQueries.DeleteUser(context.Background(), user.ID)
@@ -78,4 +78,38 @@ func TestQueries_DeleteUser(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, user2)
+}
+
+func TestQueriesListUsers(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		createRandomUser(t)
+	}
+
+	arg := ListUsersParams{
+		Limit:  5,
+		Offset: 5,
+	}
+	users, err := testQueries.ListUsers(context.Background(), arg)
+	require.NoError(t, err)
+	require.Len(t, users, 5)
+
+	for _, user := range users {
+		require.NotEmpty(t, user)
+	}
+}
+
+func TestQueriesUpdateGame(t *testing.T) {
+	game := createRandomGame(t, nil, nil)
+
+	arg := UpdateGameParams{
+		ID:        game.ID,
+		HomeScore: 2,
+		AwayScore: 1,
+	}
+	updatedGame, err := testQueries.UpdateGame(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, updatedGame)
+
+	require.Equal(t, arg.HomeScore, updatedGame.HomeScore)
+	require.Equal(t, arg.AwayScore, updatedGame.AwayScore)
 }

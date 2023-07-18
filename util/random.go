@@ -30,3 +30,9 @@ func RandomInt(min, max int64) int64 {
 func RandomEmail() string {
 	return fmt.Sprintf("%s@email.com", RandomString(6))
 }
+
+// RandomBaseballPosition returns a random baseball position from a list of positions from positions.go
+func RandomBaseballPosition() BaseballPosition {
+	list := []BaseballPosition{Pitcher, Catcher, FirstBase, SecondBase, ThirdBase, ShortStop, LeftField, CenterField, RightField, DesignatedHitter, RightCenterField, LeftCenterField}
+	return list[rand.Intn(len(list))]
+}
