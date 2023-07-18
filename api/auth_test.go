@@ -64,7 +64,9 @@ func TestServerLoginUser(t *testing.T) {
 				"username": user.Username,
 				"password": "as",
 			},
-			buildStubs: func(store *mockdb.MockStore) {},
+			buildStubs: func(store *mockdb.MockStore) {
+				// do nothing
+			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
 			},
