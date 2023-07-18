@@ -15,7 +15,7 @@ var (
 // Payload is the output of the token creation process.
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
+	UserID    uuid.UUID `json:"user_id"`
 	IssuedAt  time.Time `json:"issued_at"`
 	ExpireAt  time.Time `json:"expire_at"`
 	NotBefore time.Time `json:"not_before"`
@@ -57,14 +57,14 @@ func (p *Payload) Valid() error {
 }
 
 // NewPayload creates a new payload with a specific username and duration.
-func NewPayload(username string, duration time.Duration) (*Payload, error) {
+func NewPayload(userID uuid.UUID, duration time.Duration) (*Payload, error) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
 	}
 	return &Payload{
 		ID:        tokenID,
-		Username:  username,
+		UserID:    userID,
 		IssuedAt:  time.Now(),
 		ExpireAt:  time.Now().Add(duration),
 		NotBefore: time.Now().Add(duration - 5*time.Minute),

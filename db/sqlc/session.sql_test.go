@@ -17,7 +17,10 @@ func createRandomSession(t *testing.T) Session {
 	// Create refreshToken
 	maker, err := token.NewPasetoMaker(util.RandomString(32))
 
-	refreshToken, p, err := maker.CreateToken(user.Username, 4*time.Minute)
+	u, err := uuid.NewRandom()
+	require.NoError(t, err)
+
+	refreshToken, p, err := maker.CreateToken(u, 4*time.Minute)
 
 	arg := CreateSessionParams{
 		ID:           uuid.New(),
@@ -44,11 +47,11 @@ func createRandomSession(t *testing.T) Session {
 	return session
 }
 
-func TestQueries_CreateSession(t *testing.T) {
+func TestQueriesCreateSession(t *testing.T) {
 	createRandomSession(t)
 }
 
-func TestQueries_GetSession(t *testing.T) {
+func TestQueriesGetSession(t *testing.T) {
 	session := createRandomSession(t)
 	session2, err := testQueries.GetSession(context.Background(), session.ID)
 	require.NoError(t, err)
@@ -59,6 +62,28 @@ func TestQueries_GetSession(t *testing.T) {
 	require.Equal(t, session.UserAgent, session2.UserAgent)
 	require.Equal(t, session.ClientIp, session2.ClientIp)
 	require.Equal(t, session.IsBlocked, session2.IsBlocked)
+	require.Equal(t, session.ExpiresAt, session2.ExpiresAt)
+	require.Equal(t, session.CreatedAt, session2.CreatedAt)
+}
+
+func TestQueriesUpdateSession(t *testing.T) {
+	session := createRandomSession(t)
+
+	arg := UpdateSessionParams{
+		ID:        session.ID,
+		IsBlocked: true,
+	}
+
+	session2, err := testQueries.UpdateSession(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, session2)
+
+	require.Equal(t, session.ID, session2.ID)
+	require.Equal(t, session.UserID, session2.UserID)
+	require.Equal(t, session.RefreshToken, session2.RefreshToken)
+	require.Equal(t, session.UserAgent, session2.UserAgent)
+	require.Equal(t, session.ClientIp, session2.ClientIp)
+	require.Equal(t, true, session2.IsBlocked)
 	require.Equal(t, session.ExpiresAt, session2.ExpiresAt)
 	require.Equal(t, session.CreatedAt, session2.CreatedAt)
 }

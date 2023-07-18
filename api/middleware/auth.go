@@ -49,3 +49,11 @@ func AuthMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func GetAuthorizationPayload(c *gin.Context) *token.Payload {
+	payload, exists := c.Get(AuthorizationPayloadKey)
+	if !exists {
+		return nil
+	}
+	return payload.(*token.Payload)
+}

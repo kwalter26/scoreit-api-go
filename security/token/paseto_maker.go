@@ -2,6 +2,7 @@ package token
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/o1egl/paseto"
 	"golang.org/x/crypto/chacha20poly1305"
 	"time"
@@ -14,8 +15,8 @@ type PasetoMaker struct {
 }
 
 // CreateToken creates a new token for a specific username and duration for paseto.
-func (p PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(username, duration)
+func (p PasetoMaker) CreateToken(userID uuid.UUID, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(userID, duration)
 	if err != nil {
 		return "", payload, err
 	}

@@ -54,7 +54,7 @@ func TestServerCreateGame(t *testing.T) {
 					Return(db.Game{}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -70,7 +70,7 @@ func TestServerCreateGame(t *testing.T) {
 				// No expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -86,7 +86,7 @@ func TestServerCreateGame(t *testing.T) {
 				// No expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -121,7 +121,7 @@ func TestServerCreateGame(t *testing.T) {
 					Return(db.Game{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -140,7 +140,7 @@ func TestServerCreateGame(t *testing.T) {
 					Return(db.Game{}, &pg.Error{Code: "23505"})
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -213,7 +213,7 @@ func TestServerListGames(t *testing.T) {
 					Return(games, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -230,7 +230,7 @@ func TestServerListGames(t *testing.T) {
 				// No expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -269,7 +269,7 @@ func TestServerListGames(t *testing.T) {
 					Return(nil, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -292,7 +292,7 @@ func TestServerListGames(t *testing.T) {
 					Return(games[5:], nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -310,7 +310,7 @@ func TestServerListGames(t *testing.T) {
 				// No expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -327,7 +327,7 @@ func TestServerListGames(t *testing.T) {
 				// No expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -352,7 +352,7 @@ func TestServerListGames(t *testing.T) {
 					Return([]db.Game{games[0]}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -378,7 +378,7 @@ func TestServerListGames(t *testing.T) {
 					Return([]db.Game{games[0]}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -432,7 +432,7 @@ func TestServerGetGame(t *testing.T) {
 					Return(game, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -449,7 +449,7 @@ func TestServerGetGame(t *testing.T) {
 					Return(db.Game{}, sql.ErrNoRows)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
@@ -464,7 +464,7 @@ func TestServerGetGame(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -495,7 +495,7 @@ func TestServerGetGame(t *testing.T) {
 					Return(db.Game{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -561,7 +561,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Return(updateGame, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -587,7 +587,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Return(db.Game{}, sql.ErrNoRows)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
@@ -603,7 +603,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -622,7 +622,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -641,7 +641,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -661,7 +661,7 @@ func TestServerUpdateGame(t *testing.T) {
 					Return(db.Game{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.Username, time.Minute)
+				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)

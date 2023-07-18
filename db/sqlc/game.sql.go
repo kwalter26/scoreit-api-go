@@ -119,7 +119,9 @@ func (q *Queries) ListGames(ctx context.Context, arg ListGamesParams) ([]Game, e
 
 const updateGame = `-- name: UpdateGame :one
 UPDATE game
-SET home_score = $1, away_score = $2, updated_at = NOW()
+SET home_score = $1,
+    away_score = $2,
+    updated_at = NOW()
 WHERE id = $3
 RETURNING id, home_team_id, away_team_id, home_score, away_score, created_at, updated_at
 `

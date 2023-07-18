@@ -6,6 +6,7 @@ import (
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
+	"github.com/rs/zerolog/log"
 )
 
 type Server struct {
@@ -22,7 +23,9 @@ func (s *Server) setupRouter() {
 	router.Use(middleware.LoggerMiddleware())
 
 	router.POST("/api/v1/users", s.CreateNewUser)
-	router.POST("/api/v1/login", s.LoginUser)
+	router.POST("/api/v1/auth/login", s.LoginUser)
+	router.POST("/api/v1/auth/renew", s.RefreshToken)
+	router.POST("/api/v1/auth/logout", s.LogoutUser)
 
 	authRoutes := router.Group("/api/").Use(middleware.AuthMiddleware(s.tokenMaker))
 
@@ -55,5 +58,6 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 }
 
 func (s *Server) Start(address string) error {
+	log.Info().Str("address", address).Msg("starting server")
 	return s.router.Run(address)
 }
