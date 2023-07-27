@@ -8,6 +8,7 @@ import (
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/rs/zerolog/log"
+	"os"
 )
 
 type Server struct {
@@ -19,7 +20,7 @@ type Server struct {
 }
 
 func (s *Server) setupRouter() {
-	e, err := casbin.NewEnforcer("security/authz_model.conf", "security/authz_policy.csv")
+	e, err := casbin.NewEnforcer(s.config.CasbinModelPath, s.config.CasbinPolicyPath)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create casbin enforcer")
 	}
@@ -56,6 +57,9 @@ func (s *Server) setupRouter() {
 }
 
 func NewServer(config util.Config, store db.Store) (*Server, error) {
+	// print current working directory
+	dir, err := os.Getwd()
+	log.Info().Str("dir", dir).Msg("current working directory")
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {
 		return nil, err

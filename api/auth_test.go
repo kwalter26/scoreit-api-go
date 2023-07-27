@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/db/mock"
 	"github.com/kwalter26/scoreit-api-go/db/sqlc"
+	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/stretchr/testify/require"
 	"net/http"
@@ -37,6 +38,10 @@ func TestServerLoginUser(t *testing.T) {
 					GetUserByUsername(gomock.Any(), gomock.Eq(user.Username)).
 					Times(1).
 					Return(user, nil)
+				store.EXPECT().
+					GetRoles(gomock.Any(), gomock.Eq(user.ID)).
+					Times(1).
+					Return([]db.UserRole{{Name: "user"}}, nil)
 				store.EXPECT().
 					CreateSession(gomock.Any(), gomock.Any()).Times(1)
 			},
@@ -157,7 +162,7 @@ func TestServerLogoutUser(t *testing.T) {
 		{
 			name: "OK",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				arg := db.UpdateSessionParams{
@@ -179,7 +184,7 @@ func TestServerLogoutUser(t *testing.T) {
 		{
 			name: "InternalServerError",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				arg := db.UpdateSessionParams{
@@ -223,7 +228,7 @@ func TestServerLogoutUser(t *testing.T) {
 		{
 			name: "SessionNotFound",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				arg := db.UpdateSessionParams{
@@ -282,7 +287,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "OK",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				session := db.Session{
@@ -316,7 +321,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "InternalServerError (GetSession)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				store.EXPECT().
@@ -345,7 +350,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "NotFound (SessionNotFound)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				store.EXPECT().
@@ -364,7 +369,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "Unauthorized (SessionIsBlocked)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				session := db.Session{
@@ -397,7 +402,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "Unauthorized (SessionExpired)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				session := db.Session{
@@ -430,9 +435,9 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "Unauthorized (RefreshTokenMismatch)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
-				anotherToken, _, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				anotherToken, _, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				session := db.Session{
@@ -465,7 +470,7 @@ func TestServerRefreshToken(t *testing.T) {
 		{
 			name: "Unauthorized (UserIDMismatch)",
 			buildStubs: func(store *mockdb.MockStore, tokenMaker token.Maker) gin.H {
-				createToken, payload, err := tokenMaker.CreateToken(user.ID, time.Minute)
+				createToken, payload, err := tokenMaker.CreateToken(user.ID, security.UserRoles, time.Minute)
 				require.NoError(t, err)
 
 				store.EXPECT().

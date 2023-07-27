@@ -24,6 +24,8 @@ func newTestServer(t *testing.T, store db.Store) *Server {
 	config := util.Config{
 		TokenSymmetricKey:   util.RandomString(32),
 		AccessTokenDuration: time.Minute,
+		CasbinPolicyPath:    "../security/authz_policy.csv",
+		CasbinModelPath:     "../security/authz_model.conf",
 	}
 
 	server, err := NewServer(config, store)
@@ -64,8 +66,36 @@ func EqCreateUserParamsMatcher(arg db.CreateUserParams, password string) gomock.
 	return eqCreateUserParamsMatcher{arg: arg, password: password}
 }
 
-func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, authorizationType string, u uuid.UUID, duration time.Duration) {
-	createToken, payload, err := tokenMaker.CreateToken(u, duration)
+type eqCreateUserTxParamsMatcher struct {
+	arg      db.CreateUserTxParams
+	password string
+}
+
+func (e eqCreateUserTxParamsMatcher) Matches(x interface{}) bool {
+	arg, ok := x.(db.CreateUserTxParams)
+	if !ok {
+		return false
+	}
+
+	err := security.CheckPassword(e.password, arg.CreateUserParams.HashedPassword)
+	if err != nil {
+		return false
+	}
+
+	e.arg.CreateUserParams.HashedPassword = arg.CreateUserParams.HashedPassword
+	return reflect.DeepEqual(e.arg, arg)
+}
+
+func (e eqCreateUserTxParamsMatcher) String() string {
+	return fmt.Sprintf("matches arg %v and password %v", e.arg, e.password)
+}
+
+func EqCreateUserTxParamsMatcher(arg db.CreateUserTxParams, password string) gomock.Matcher {
+	return eqCreateUserTxParamsMatcher{arg: arg, password: password}
+}
+
+func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, roles []security.Role, authorizationType string, u uuid.UUID, duration time.Duration) {
+	createToken, payload, err := tokenMaker.CreateToken(u, roles, duration)
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 

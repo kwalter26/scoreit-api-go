@@ -2,6 +2,7 @@ package token
 
 import (
 	"github.com/google/uuid"
+	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/udemy-simplebank/util"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -19,7 +20,7 @@ func TestNewPasetoMaker(t *testing.T) {
 	issuedAt := time.Now()
 	expiredAt := issuedAt.Add(duration)
 
-	token, payload, err := maker.CreateToken(u, duration)
+	token, payload, err := maker.CreateToken(u, security.UserRoles, duration)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 	require.NotEmpty(t, payload)
@@ -42,7 +43,7 @@ func TestExpiredPasetoToken(t *testing.T) {
 	u, err := uuid.NewRandom()
 	require.NoError(t, err)
 
-	token, payload, err := maker.CreateToken(u, -time.Minute)
+	token, payload, err := maker.CreateToken(u, security.UserRoles, -time.Minute)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 	require.NotEmpty(t, payload)
@@ -67,7 +68,7 @@ func TestInvalidToken(t *testing.T) {
 	u, err := uuid.NewRandom()
 	duration := time.Minute
 
-	token, payload, err := maker.CreateToken(u, duration)
+	token, payload, err := maker.CreateToken(u, security.UserRoles, duration)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 	require.NotEmpty(t, payload)

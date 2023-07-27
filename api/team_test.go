@@ -38,7 +38,7 @@ func TestServer_ListTeams(t *testing.T) {
 			pageSize:   10,
 			pageNumber: 1,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				args := db.ListTeamsParams{
@@ -74,7 +74,7 @@ func TestServer_ListTeams(t *testing.T) {
 			pageSize:   -1,
 			pageNumber: 0,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				// no expectations
@@ -88,7 +88,7 @@ func TestServer_ListTeams(t *testing.T) {
 			pageSize:   101,
 			pageNumber: 0,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 
 			},
 			buildStubs: func(store *mockdb.MockStore) {
@@ -103,7 +103,8 @@ func TestServer_ListTeams(t *testing.T) {
 			pageSize:   10,
 			pageNumber: -1,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				// no expectations
@@ -117,7 +118,8 @@ func TestServer_ListTeams(t *testing.T) {
 			pageSize:   10,
 			pageNumber: 1,
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				args := db.ListTeamsParams{
@@ -177,7 +179,8 @@ func TestCreateTeamAPI(t *testing.T) {
 				"name": team.Name,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -211,7 +214,8 @@ func TestCreateTeamAPI(t *testing.T) {
 				"name": "",
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				// no expectations
@@ -226,7 +230,8 @@ func TestCreateTeamAPI(t *testing.T) {
 				"name": team.Name,
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			buildStubs: func(store *mockdb.MockStore) {
 				store.EXPECT().
@@ -300,7 +305,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 					Return(teamMembers, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -331,7 +337,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -354,7 +361,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 					Return(nil, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -369,7 +377,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -384,7 +393,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -399,7 +409,8 @@ func TestServer_ListTeamMembers(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -473,7 +484,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 					}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -509,7 +521,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -527,7 +540,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -545,7 +559,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -562,7 +577,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -580,7 +596,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -597,7 +614,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -624,7 +642,8 @@ func TestServer_AddTeamMember(t *testing.T) {
 					Return(db.TeamMember{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -682,7 +701,7 @@ func TestServer_GetTeam(t *testing.T) {
 					Return(team, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMake token.Maker) {
-				addAuthorization(t, request, tokenMake, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMake, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -699,7 +718,7 @@ func TestServer_GetTeam(t *testing.T) {
 					Return(db.Team{}, sql.ErrNoRows)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMake token.Maker) {
-				addAuthorization(t, request, tokenMake, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMake, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
@@ -712,7 +731,7 @@ func TestServer_GetTeam(t *testing.T) {
 				// no expectations
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMake token.Maker) {
-				addAuthorization(t, request, tokenMake, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMake, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -728,7 +747,7 @@ func TestServer_GetTeam(t *testing.T) {
 					Return(db.Team{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMake token.Maker) {
-				addAuthorization(t, request, tokenMake, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMake, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
