@@ -15,8 +15,8 @@ type PasetoMaker struct {
 }
 
 // CreateToken creates a new token for a specific username and duration for paseto.
-func (p PasetoMaker) CreateToken(userID uuid.UUID, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(userID, duration)
+func (p PasetoMaker) CreateToken(userID uuid.UUID, permissions []string, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(userID, permissions, duration)
 	if err != nil {
 		return "", payload, err
 	}

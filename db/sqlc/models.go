@@ -102,6 +102,14 @@ type User struct {
 	UpdatedAt         time.Time `json:"updated_at"`
 }
 
+type UserRole struct {
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	UserID    uuid.UUID `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type VerifyEmail struct {
 	ID         uuid.UUID `json:"id"`
 	UserID     string    `json:"user_id"`

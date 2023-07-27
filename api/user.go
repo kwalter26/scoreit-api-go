@@ -54,7 +54,7 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 	}
 
 	hashedPassword, err := security.HashPassword(req.Password)
-	arg := db.CreateUserParams{
+	createUserArg := db.CreateUserParams{
 		Username:       req.Username,
 		FirstName:      req.FirstName,
 		LastName:       req.LastName,
@@ -62,7 +62,14 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 		Email:          req.Email,
 	}
 
-	user, err := s.store.CreateUser(context, arg)
+	createRoleArg := db.CreateRoleParams{
+		Name: "user",
+	}
+
+	user, err := s.store.CreateUserTx(context, db.CreateUserTxParams{
+		CreateUserParams: createUserArg,
+		CreateRoleParams: createRoleArg,
+	})
 	if err != nil {
 		if pgErr, err := err.(*pq.Error); err {
 			switch pgErr.Code.Name() {
@@ -75,7 +82,7 @@ func (s *Server) CreateNewUser(context *gin.Context) {
 		return
 	}
 
-	rsp := NewUserResponse(user)
+	rsp := NewUserResponse(user.User)
 	context.JSON(http.StatusOK, rsp)
 }
 
