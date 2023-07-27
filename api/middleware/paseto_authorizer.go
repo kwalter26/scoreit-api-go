@@ -33,9 +33,9 @@ func (a *PasetoAuthorizer) GetUser(c *gin.Context) string {
 		user = p.UserID.String()
 		var groups [][]string
 		for _, g := range p.Permissions {
-			groups = append(groups, []string{user, g})
+			groups = append(groups, []string{user, string(g)})
 		}
-		a.enforcer.AddGroupingPolicies(groups)
+		_, _ = a.enforcer.AddGroupingPolicies(groups)
 		return user
 	}
 }

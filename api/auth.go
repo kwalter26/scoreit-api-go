@@ -59,9 +59,9 @@ func (s *Server) LoginUser(context *gin.Context) {
 		}
 	}
 
-	permissions := []string{}
+	var permissions []security.Role
 	for _, role := range roles {
-		permissions = append(permissions, role.Name)
+		permissions = append(permissions, security.Role(role.Name))
 	}
 
 	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.ID, permissions, s.config.AccessTokenDuration)
@@ -70,7 +70,7 @@ func (s *Server) LoginUser(context *gin.Context) {
 		return
 	}
 
-	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.ID, []string{}, s.config.RefreshTokenDuration)
+	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.ID, []security.Role{}, s.config.RefreshTokenDuration)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
@@ -164,10 +164,10 @@ func (s *Server) RefreshToken(context *gin.Context) {
 	}
 
 	// Get the user from the database
-	permissions := []string{}
+	permissions := new([]security.Role)
 
 	// Create a new access token
-	accessToken, accessPayload, err := s.tokenMaker.CreateToken(refreshPayload.UserID, permissions, s.config.AccessTokenDuration)
+	accessToken, accessPayload, err := s.tokenMaker.CreateToken(refreshPayload.UserID, *permissions, s.config.AccessTokenDuration)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, helpers.ErrorResponse(err))
 		return

@@ -3,6 +3,7 @@ package token
 import (
 	"errors"
 	"github.com/google/uuid"
+	"github.com/kwalter26/scoreit-api-go/security"
 	"time"
 )
 
@@ -21,7 +22,7 @@ type Payload struct {
 	Audience    string
 	Issuer      string
 	Subject     string
-	Permissions []string
+	Permissions []security.Role
 }
 
 func (p *Payload) Valid() error {
@@ -33,7 +34,7 @@ func (p *Payload) Valid() error {
 }
 
 // NewPayload creates a new payload with a specific username and duration.
-func NewPayload(userID uuid.UUID, permissions []string, duration time.Duration) (*Payload, error) {
+func NewPayload(userID uuid.UUID, permissions []security.Role, duration time.Duration) (*Payload, error) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err

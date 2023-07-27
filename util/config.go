@@ -18,6 +18,8 @@ type Config struct {
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 
 	TokenSymmetricKey string `mapstructure:"TOKEN_SYMMETRIC_KEY"`
+	CasbinModelPath   string `mapstructure:"CASBIN_MODEL_PATH"`
+	CasbinPolicyPath  string `mapstructure:"CASBIN_POLICY_PATH"`
 }
 
 type Environment string
