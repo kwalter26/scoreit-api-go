@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-07-16T19:43:59.889Z
+-- Generated at: 2023-07-26T23:58:13.621Z
 
 CREATE TABLE "users"
 (
@@ -14,6 +14,15 @@ CREATE TABLE "users"
     "password_changed_at" timestamptz      NOT NULL DEFAULT '0001-01-01 00:00:00Z',
     "created_at"          timestamptz      NOT NULL DEFAULT (now()),
     "updated_at"          timestamptz      NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "user_roles"
+(
+    "id"         uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
+    "name"       varchar          NOT NULL,
+    "user_id"    uuid             NOT NULL,
+    "created_at" timestamptz      NOT NULL DEFAULT (now()),
+    "updated_at" timestamptz      NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "verify_emails"
@@ -118,6 +127,9 @@ CREATE UNIQUE INDEX ON "users" ("username");
 CREATE UNIQUE INDEX ON "verify_emails" ("secret_code");
 
 CREATE UNIQUE INDEX ON "teams" ("name");
+
+ALTER TABLE "user_roles"
+    ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "verify_emails"
     ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
