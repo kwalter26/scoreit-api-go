@@ -7,6 +7,8 @@ CREATE TABLE "user_roles"
     "updated_at" timestamptz      NOT NULL DEFAULT (now())
 );
 
+CREATE UNIQUE INDEX ON "user_roles" ("name", "user_id");
+
 ALTER TABLE "user_roles"
     ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 

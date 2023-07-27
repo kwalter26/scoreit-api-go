@@ -27,6 +27,9 @@ Table user_roles as R {
   user_id uuid [ref: > U.id, not null]
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
+  Indexes {
+      (name,user_id)[unique]
+  }
 }
 
 Table verify_emails {
