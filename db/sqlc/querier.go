@@ -21,8 +21,8 @@ type Querier interface {
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	GetGame(ctx context.Context, id uuid.UUID) (Game, error)
 	GetRole(ctx context.Context, id uuid.UUID) (UserRole, error)
-	GetRoleByName(ctx context.Context, name string) (UserRole, error)
 	GetRoles(ctx context.Context, userID uuid.UUID) ([]UserRole, error)
+	GetRolesByName(ctx context.Context, name string) ([]UserRole, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)

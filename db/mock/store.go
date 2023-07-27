@@ -199,21 +199,6 @@ func (mr *MockStoreMockRecorder) GetRole(arg0, arg1 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRole", reflect.TypeOf((*MockStore)(nil).GetRole), arg0, arg1)
 }
 
-// GetRoleByName mocks base method.
-func (m *MockStore) GetRoleByName(arg0 context.Context, arg1 string) (db.UserRole, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRoleByName", arg0, arg1)
-	ret0, _ := ret[0].(db.UserRole)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetRoleByName indicates an expected call of GetRoleByName.
-func (mr *MockStoreMockRecorder) GetRoleByName(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleByName", reflect.TypeOf((*MockStore)(nil).GetRoleByName), arg0, arg1)
-}
-
 // GetRoles mocks base method.
 func (m *MockStore) GetRoles(arg0 context.Context, arg1 uuid.UUID) ([]db.UserRole, error) {
 	m.ctrl.T.Helper()
@@ -227,6 +212,21 @@ func (m *MockStore) GetRoles(arg0 context.Context, arg1 uuid.UUID) ([]db.UserRol
 func (mr *MockStoreMockRecorder) GetRoles(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoles", reflect.TypeOf((*MockStore)(nil).GetRoles), arg0, arg1)
+}
+
+// GetRolesByName mocks base method.
+func (m *MockStore) GetRolesByName(arg0 context.Context, arg1 string) ([]db.UserRole, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRolesByName", arg0, arg1)
+	ret0, _ := ret[0].([]db.UserRole)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRolesByName indicates an expected call of GetRolesByName.
+func (mr *MockStoreMockRecorder) GetRolesByName(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolesByName", reflect.TypeOf((*MockStore)(nil).GetRolesByName), arg0, arg1)
 }
 
 // GetSession mocks base method.

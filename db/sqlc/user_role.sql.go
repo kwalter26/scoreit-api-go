@@ -54,25 +54,6 @@ func (q *Queries) GetRole(ctx context.Context, id uuid.UUID) (UserRole, error) {
 	return i, err
 }
 
-const getRoleByName = `-- name: GetRoleByName :one
-SELECT id, name, user_id, created_at, updated_at
-FROM user_roles
-WHERE name = $1
-`
-
-func (q *Queries) GetRoleByName(ctx context.Context, name string) (UserRole, error) {
-	row := q.db.QueryRowContext(ctx, getRoleByName, name)
-	var i UserRole
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.UserID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
 const getRoles = `-- name: GetRoles :many
 SELECT id, name, user_id, created_at, updated_at
 FROM user_roles
@@ -81,6 +62,41 @@ WHERE user_id = $1
 
 func (q *Queries) GetRoles(ctx context.Context, userID uuid.UUID) ([]UserRole, error) {
 	rows, err := q.db.QueryContext(ctx, getRoles, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []UserRole{}
+	for rows.Next() {
+		var i UserRole
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.UserID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getRolesByName = `-- name: GetRolesByName :many
+SELECT id, name, user_id, created_at, updated_at
+FROM user_roles
+WHERE name = $1
+`
+
+func (q *Queries) GetRolesByName(ctx context.Context, name string) ([]UserRole, error) {
+	rows, err := q.db.QueryContext(ctx, getRolesByName, name)
 	if err != nil {
 		return nil, err
 	}
