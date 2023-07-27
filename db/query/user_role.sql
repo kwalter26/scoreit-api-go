@@ -8,7 +8,7 @@ SELECT *
 FROM user_roles
 WHERE id = $1;
 
--- name: GetRoleByName :one
+-- name: GetRolesByName :many
 SELECT *
 FROM user_roles
 WHERE name = $1;
