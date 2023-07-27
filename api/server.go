@@ -46,7 +46,10 @@ func (s *Server) setupRouter() {
 	authRoutes.GET("/v1/teams/:id", s.GetTeam)
 
 	authRoutes.GET("/v1/players", s.ListUsers)
+	authRoutes.GET("/v1/players/roles", s.ListUserRoles)
 	authRoutes.GET("/v1/players/:id", s.GetUser)
+	authRoutes.GET("/v1/players/:id/roles", s.GetUserRoles)
+	authRoutes.PUT("/v1/players/:id/roles", s.CreateUserRole)
 
 	authRoutes.POST("/v1/games", s.CreateGame)
 	authRoutes.GET("/v1/games", s.ListGames)

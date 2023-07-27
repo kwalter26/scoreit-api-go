@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-07-26T23:58:13.621Z
+-- Generated at: 2023-07-27T04:17:04.228Z
 
 CREATE TABLE "users"
 (
@@ -123,6 +123,8 @@ CREATE TABLE "game_stat"
 );
 
 CREATE UNIQUE INDEX ON "users" ("username");
+
+CREATE UNIQUE INDEX ON "user_roles" ("name", "user_id");
 
 CREATE UNIQUE INDEX ON "verify_emails" ("secret_code");
 
