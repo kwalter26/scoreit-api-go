@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
@@ -18,6 +19,12 @@ type Server struct {
 }
 
 func (s *Server) setupRouter() {
+	e, err := casbin.NewEnforcer("security/authz_model.conf", "security/authz_policy.csv")
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create casbin enforcer")
+	}
+	log.Info().Msg("created casbin enforcer")
+
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(middleware.LoggerMiddleware())
@@ -27,7 +34,9 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/auth/renew", s.RefreshToken)
 	router.POST("/api/v1/auth/logout", s.LogoutUser)
 
-	authRoutes := router.Group("/api/").Use(middleware.AuthMiddleware(s.tokenMaker))
+	authRoutes := router.Group("/api/")
+	authRoutes.Use(middleware.AuthMiddleware(s.tokenMaker))
+	authRoutes.Use(middleware.NewAuthorizeMiddleware(e))
 
 	authRoutes.GET("/v1/teams", s.ListTeams)
 	authRoutes.POST("/v1/teams", s.CreateTeam)

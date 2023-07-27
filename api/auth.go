@@ -51,13 +51,26 @@ func (s *Server) LoginUser(context *gin.Context) {
 		return
 	}
 
-	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.ID, s.config.AccessTokenDuration)
+	roles, err := s.store.GetRoles(context, user.ID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
+			return
+		}
+	}
+
+	permissions := []string{}
+	for _, role := range roles {
+		permissions = append(permissions, role.Name)
+	}
+
+	accessToken, accessPayload, err := s.tokenMaker.CreateToken(user.ID, permissions, s.config.AccessTokenDuration)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
 	}
 
-	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.ID, s.config.RefreshTokenDuration)
+	refreshToken, refreshPayload, err := s.tokenMaker.CreateToken(user.ID, []string{}, s.config.RefreshTokenDuration)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
 		return
@@ -150,8 +163,11 @@ func (s *Server) RefreshToken(context *gin.Context) {
 		return
 	}
 
+	// Get the user from the database
+	permissions := []string{}
+
 	// Create a new access token
-	accessToken, accessPayload, err := s.tokenMaker.CreateToken(refreshPayload.UserID, s.config.AccessTokenDuration)
+	accessToken, accessPayload, err := s.tokenMaker.CreateToken(refreshPayload.UserID, permissions, s.config.AccessTokenDuration)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, helpers.ErrorResponse(err))
 		return

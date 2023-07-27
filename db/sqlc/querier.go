@@ -13,12 +13,16 @@ import (
 type Querier interface {
 	AddTeamMember(ctx context.Context, arg AddTeamMemberParams) (TeamMember, error)
 	CreateGame(ctx context.Context, arg CreateGameParams) (Game, error)
+	CreateRole(ctx context.Context, arg CreateRoleParams) (UserRole, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTeam(ctx context.Context, name string) (Team, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteTeam(ctx context.Context, id uuid.UUID) error
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	GetGame(ctx context.Context, id uuid.UUID) (Game, error)
+	GetRole(ctx context.Context, id uuid.UUID) (UserRole, error)
+	GetRoleByName(ctx context.Context, name string) (UserRole, error)
+	GetRoles(ctx context.Context, userID uuid.UUID) ([]UserRole, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
