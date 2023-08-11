@@ -50,6 +50,35 @@ func AuthMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 	}
 }
 
+//func Auth0Middleware(config util.Config) gin.HandlerFunc {
+//	return func(c *gin.Context) {
+//		issuerURL, err := url.Parse("https://" + config.Auth0Domain + "/")
+//		if err != nil {
+//			log.Fatal().Err(err).Msg("failed to parse the issuer url")
+//		}
+//
+//		provider := jwks.NewCachingProvider(issuerURL, 5*time.Minute)
+//
+//		jwtValidator, _ := validator.New(
+//			provider.KeyFunc,
+//			validator.RS256,
+//			issuerURL.String(),
+//			[]string{config.Auth0Audience},
+//		)
+//		jwtMiddleware := jwtmiddleware.New(jwtValidator.ValidateToken)
+//
+//		//err := jwtMiddleware.CheckJWT(c.Writer, c.Request)
+//		if err != nil {
+//			// Handle authentication error
+//			c.AbortWithStatus(http.StatusUnauthorized)
+//			return
+//		}
+//
+//		// Continue to the next middleware/handler
+//		c.Next()
+//	}
+//}
+
 func GetAuthorizationPayload(c *gin.Context) *token.Payload {
 	payload, exists := c.Get(AuthorizationPayloadKey)
 	if !exists {

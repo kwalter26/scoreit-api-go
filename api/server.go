@@ -1,14 +1,20 @@
 package api
 
 import (
+	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
+	"github.com/auth0/go-jwt-middleware/v2/jwks"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
+	adapter "github.com/gwatts/gin-adapter"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/rs/zerolog/log"
+	"net/url"
 	"os"
+	"time"
 )
 
 type Server struct {
@@ -20,7 +26,7 @@ type Server struct {
 }
 
 func (s *Server) setupRouter() {
-	e, err := casbin.NewEnforcer(s.config.CasbinModelPath, s.config.CasbinPolicyPath)
+	_, err := casbin.NewEnforcer(s.config.CasbinModelPath, s.config.CasbinPolicyPath)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create casbin enforcer")
 	}
@@ -36,8 +42,24 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/auth/logout", s.LogoutUser)
 
 	authRoutes := router.Group("/api/")
-	authRoutes.Use(middleware.AuthMiddleware(s.tokenMaker))
-	authRoutes.Use(middleware.NewAuthorizeMiddleware(e))
+
+	issuerURL, err := url.Parse("https://" + s.config.Auth0Domain + "/")
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to parse the issuer url")
+	}
+
+	provider := jwks.NewCachingProvider(issuerURL, 5*time.Minute)
+
+	jwtValidator, _ := validator.New(
+		provider.KeyFunc,
+		validator.RS256,
+		issuerURL.String(),
+		[]string{s.config.Auth0Audience},
+	)
+	jwtMiddleware := jwtmiddleware.New(jwtValidator.ValidateToken)
+	authRoutes.Use(adapter.Wrap(jwtMiddleware.CheckJWT))
+	//authRoutes.Use(middleware.AuthMiddleware(s.tokenMaker))
+	//authRoutes.Use(middleware.NewAuthorizeMiddleware(e))
 
 	authRoutes.GET("/v1/teams", s.ListTeams)
 	authRoutes.POST("/v1/teams", s.CreateTeam)

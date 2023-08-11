@@ -2,12 +2,15 @@ package api
 
 import (
 	"database/sql"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/helpers"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"time"
 )
@@ -107,6 +110,9 @@ func (s *Server) ListUsers(context *gin.Context) {
 		context.JSON(400, helpers.ErrorResponse(err))
 		return
 	}
+
+	token := context.Request.Context().Value(jwtmiddleware.ContextKey{}).(*validator.ValidatedClaims)
+	log.Info().Msgf("User %s is listing users", token.RegisteredClaims.Subject)
 
 	arg := db.ListUsersParams{
 		Limit:  req.PageSize,
