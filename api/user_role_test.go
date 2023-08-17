@@ -81,6 +81,87 @@ func TestServer_CreateUserRole(t *testing.T) {
 	}
 }
 
+func TestServer_ListUserRoles(t *testing.T) {
+	user, _ := createRandomUser(t)
+	testCases := []struct {
+		name          string
+		buildStubs    func(store *mockdb.MockStore)
+		setupAuth     func(t *testing.T, request *http.Request, tokenMake token.Maker)
+		checkResponse func(recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "OK",
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					ListRoles(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return([]db.UserRole{
+						{
+							ID:     uuid.New(),
+							Name:   "admin",
+							UserID: user.ID,
+						},
+						{
+							ID:     uuid.New(),
+							Name:   "user",
+							UserID: user.ID,
+						},
+					}, nil)
+			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+				requireBodyMatchUserRoles(t, recorder.Body, []GetUserRolesResponse{{Name: "admin"}, {Name: "user"}})
+			},
+		},
+		{
+			name: "NoRolesFound",
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					ListRoles(gomock.Any(), gomock.Any()).
+					Times(1).
+					Return([]db.UserRole{}, nil)
+			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+				requireBodyMatchUserRoles(t, recorder.Body, []GetUserRolesResponse{})
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			store := mockdb.NewMockStore(ctrl)
+			tc.buildStubs(store)
+
+			server := newTestServer(t, store)
+			recorder := httptest.NewRecorder()
+
+			url := "/api/v1/players/roles"
+			request, _ := http.NewRequest(http.MethodGet, url, nil)
+
+			tc.setupAuth(t, request, server.tokenMaker)
+			server.router.ServeHTTP(recorder, request)
+			tc.checkResponse(recorder)
+		})
+	}
+}
+
+func requireBodyMatchUserRoles(t *testing.T, body *bytes.Buffer, roles []GetUserRolesResponse) {
+	var response []GetUserRolesResponse
+	err := json.NewDecoder(body).Decode(&response)
+	require.NoError(t, err)
+	require.Equal(t, roles, response)
+}
+
 func requireBodyMatchUserRole(t *testing.T, body *bytes.Buffer, name string) {
 	var response CreateUserRolesResponse
 	err := json.NewDecoder(body).Decode(&response)
