@@ -51,3 +51,17 @@ func TestQueries_GetRolesByName(t *testing.T) {
 	require.NotEmpty(t, roles)
 	require.Equal(t, role.Name, roles[0].Name)
 }
+
+func TestQueries_ListRoles(t *testing.T) {
+	for i := 0; i < 3; i++ {
+		createRandomRole(t)
+	}
+	arg := ListRolesParams{
+		Limit:  3,
+		Offset: 0,
+	}
+	roles, err := testQueries.ListRoles(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, roles)
+	require.Equal(t, len(roles), 3)
+}
