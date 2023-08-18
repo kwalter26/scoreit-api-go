@@ -65,3 +65,12 @@ func TestQueries_ListRoles(t *testing.T) {
 	require.NotEmpty(t, roles)
 	require.Equal(t, len(roles), 3)
 }
+
+func TestQueries_DeleteRole(t *testing.T) {
+	role := createRandomRole(t)
+	err := testQueries.DeleteRole(context.Background(), role.ID)
+	require.NoError(t, err)
+	role2, err := testQueries.GetRole(context.Background(), role.ID)
+	require.Error(t, err)
+	require.Empty(t, role2)
+}
