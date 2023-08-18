@@ -130,7 +130,7 @@ func (s *Server) RefreshToken(context *gin.Context) {
 	// Get the session from the database
 	session, err := s.store.GetSession(context, refreshPayload.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
