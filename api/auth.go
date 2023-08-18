@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -53,10 +54,12 @@ func (s *Server) LoginUser(context *gin.Context) {
 
 	roles, err := s.store.GetRoles(context, user.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(sql.ErrNoRows, err) {
 			context.JSON(http.StatusNotFound, helpers.ErrorResponse(err))
 			return
 		}
+		context.JSON(http.StatusInternalServerError, helpers.ErrorResponse(err))
+		return
 	}
 
 	var permissions []security.Role

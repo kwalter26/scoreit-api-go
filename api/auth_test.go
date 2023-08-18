@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
-	"github.com/kwalter26/scoreit-api-go/db/mock"
-	"github.com/kwalter26/scoreit-api-go/db/sqlc"
+	mockdb "github.com/kwalter26/scoreit-api-go/db/mock"
+	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/stretchr/testify/require"
@@ -122,6 +122,26 @@ func TestServerLoginUser(t *testing.T) {
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InternalServerError (GetRoles)",
+			body: gin.H{
+				"username": user.Username,
+				"password": password,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					GetUserByUsername(gomock.Any(), gomock.Eq(user.Username)).
+					Times(1).
+					Return(user, nil)
+				store.EXPECT().
+					GetRoles(gomock.Any(), gomock.Eq(user.ID)).
+					Times(1).
+					Return([]db.UserRole{}, sql.ErrConnDone)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 	}
