@@ -28,3 +28,5 @@ go.work
 app.env
 gin-bin
 
+/authz_model.conf
+/authz_policy.csv
