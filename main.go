@@ -2,7 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"github.com/golang-migrate/migrate/v4"
+	"errors"
+	migrate "github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/kwalter26/scoreit-api-go/api"
@@ -42,9 +43,9 @@ func main() {
 func runDBMigrations(migrationURL string, dbSource string) {
 	migration, err := migrate.New(migrationURL, dbSource)
 	if err != nil {
-		log.Fatal().Err(err).Msg("cannot migrate db:")
+		log.Fatal().Err(err).Msgf("cannot migrate db:%s", migrationURL)
 	}
-	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
+	if err = migration.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		log.Fatal().Err(err).Msg("failed to apply migration:")
 	}
 	log.Info().Msg("db migration completed")

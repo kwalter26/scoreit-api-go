@@ -1,7 +1,7 @@
 package util
 
 import (
-	"fmt"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 	"path/filepath"
 	"reflect"
@@ -49,9 +49,9 @@ func LoadConfig(path string, isTesting bool) (config Config, err error) {
 	err = v.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			fmt.Printf("Config file not found: %s/%s\n", absPath, filename)
+			log.Warn().Msgf("Config file not found: %s/%s\n", absPath, filename)
 		} else {
-			fmt.Printf("Config file was found but another error was produced: %s/%s\n", absPath, filename)
+			log.Warn().Msgf("Config file was found but another error was produced: %s/%s\n", absPath, filename)
 			return Config{}, err
 		}
 	}
