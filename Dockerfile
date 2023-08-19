@@ -1,12 +1,15 @@
 FROM golang:1.20-alpine AS builder
 WORKDIR /app
-COPY . .
-RUN go build -o main .
 RUN apk add --no-cache curl
 
 ARG TARGETPLATFORM
 RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCHITECTURE=amd64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCHITECTURE=arm64; else ARCHITECTURE=amd64; fi \
     && curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-${ARCHITECTURE}.tar.gz  | tar xvz
+
+COPY go.* ./
+RUN go mod download
+COPY . .
+RUN go build -o main .
 
 FROM alpine:3.18.0
 
