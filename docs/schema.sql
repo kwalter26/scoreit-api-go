@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-08-20T03:01:34.986Z
+-- Generated at: 2023-08-20T03:06:02.336Z
 
 CREATE TABLE "users"
 (
@@ -109,10 +109,12 @@ CREATE TABLE "atbat"
 CREATE TABLE "game_participant"
 (
     "id"           uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "game_id"   uuid NOT NULL,
-    "player_id" uuid NOT NULL,
-    "team_id"   uuid NOT NULL,
-    "bat_position" bigint           NOT NULL
+    "game_id"      uuid        NOT NULL,
+    "player_id"    uuid        NOT NULL,
+    "team_id"      uuid        NOT NULL,
+    "bat_position" bigint      NOT NULL,
+    "created_at"   timestamptz NOT NULL DEFAULT (now()),
+    "updated_at"   timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "game_stat"
