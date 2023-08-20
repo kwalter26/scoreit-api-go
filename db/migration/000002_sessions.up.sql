@@ -2,9 +2,9 @@ CREATE TABLE "sessions"
 (
     "id"            uuid PRIMARY KEY,
     "user_id"       uuid        NOT NULL,
-    "refresh_token" varchar     NOT NULL,
-    "user_agent"    varchar     NOT NULL,
-    "client_ip"     varchar     NOT NULL,
+    "refresh_token" varchar(100) NOT NULL,
+    "user_agent"    varchar(100) NOT NULL,
+    "client_ip"     varchar(100) NOT NULL,
     "is_blocked"    boolean     NOT NULL DEFAULT false,
     "expires_at"    timestamptz,
     "created_at"    timestamptz NOT NULL DEFAULT (now())

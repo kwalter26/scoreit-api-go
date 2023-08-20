@@ -7,10 +7,10 @@ Project score_it {
 
 Table users as U {
     id uuid [pk, default: `uuid_generate_v4()`, not null]
-    username varchar [not null]
-    first_name varchar [not null]
-    last_name varchar [not null]
-    email varchar [unique, not null]
+    username varchar(100) [not null]
+    first_name varchar(100) [not null]
+    last_name varchar(100) [not null]
+    email varchar(100) [unique, not null]
     is_email_verified boolean [not null, default: false]
     hashed_password varchar [not null]
     password_changed_at timestamptz [not null, default: '0001-01-01 00:00:00Z']
@@ -34,8 +34,8 @@ Table user_roles as R {
 
 Table verify_emails {
   id uuid [pk, default: `uuid_generate_v4()`, not null]
-  user_id varchar [ref: > U.id, not null]
-  email varchar [not null]
+  user_id varchar(100) [ref: > U.id, not null]
+  email varchar(100) [not null]
   secret_code varchar [not null]
   is_used boolean [not null, default: false]
   created_at timestamptz [not null, default: `now()`]
@@ -47,7 +47,7 @@ Table verify_emails {
 
 Table teams as T {
     id uuid [pk, default: `uuid_generate_v4()`, not null]
-    name varchar [not null]
+    name varchar(100) [not null]
     created_at timestamptz [not null, default: `now()`]
     updated_at timestamptz [not null, default: `now()`]
     Indexes {
@@ -58,7 +58,7 @@ Table teams as T {
 Table team_members as UT {
     id uuid [pk, default: `uuid_generate_v4()`, not null]
     number bigint [not null]
-    primary_position varchar [not null]
+    primary_position varchar(100) [not null]
     user_id uuid [ref: > U.id, not null]
     team_id uuid [ref: > T.id, not null]
     created_at timestamptz [not null, default: `now()`]
@@ -68,9 +68,9 @@ Table team_members as UT {
 Table sessions {
   id uuid [pk]
   user_id uuid [ref: > U.id, not null]
-  refresh_token varchar [not null]
-  user_agent varchar [not null]
-  client_ip varchar [not null]
+  refresh_token varchar(100) [not null]
+  user_agent varchar(100) [not null]
+  client_ip varchar(100) [not null]
   is_blocked boolean [not null, default: false]
   expires_at timestamptz
   created_at timestamptz [not null, default: `now()`]
@@ -114,9 +114,9 @@ Table atbat as AB {
 
 Table game_participant as GP {
   id uuid [pk, default: `uuid_generate_v4()`, not null]
-  game_id uuid [ref: > G.id]
-  player_id uuid [ref: > U.id]
-  home_team boolean [not null]
+  game_id uuid [ref: > G.id, not null]
+  player_id uuid [ref: > U.id, not null]
+  team_id uuid [ref: > T.id, not null]
   bat_position bigint [not null]
 }
 
