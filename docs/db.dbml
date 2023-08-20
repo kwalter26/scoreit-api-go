@@ -68,7 +68,7 @@ Table team_members as UT {
 Table sessions {
   id uuid [pk]
   user_id uuid [ref: > U.id, not null]
-  refresh_token varchar(100) [not null]
+  refresh_token varchar(700) [not null]
   user_agent varchar(100) [not null]
   client_ip varchar(100) [not null]
   is_blocked boolean [not null, default: false]
