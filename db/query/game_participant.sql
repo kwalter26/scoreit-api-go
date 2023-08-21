@@ -26,6 +26,11 @@ SET bat_position = COALESCE(sqlc.narg(bat_position), bat_position)
 WHERE id = $1
 RETURNING *;
 
+-- name: DeleteGameParticipant :exec
+DELETE
+FROM game_participant
+WHERE id = $1;
+
 
 
 

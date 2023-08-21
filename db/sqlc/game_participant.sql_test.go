@@ -122,3 +122,19 @@ func TestQueries_UpdateGameParticipant(t *testing.T) {
 	require.WithinDuration(t, participant1.CreatedAt, participant2.CreatedAt, 0)
 	require.WithinDuration(t, participant1.UpdatedAt, participant2.UpdatedAt, 0)
 }
+
+func TestQueries_DeleteGameParticipant(t *testing.T) {
+	homeTeam := createRandomTeam(t)
+	awayTeam := createRandomTeam(t)
+	game := createRandomGame(t, &homeTeam, &awayTeam)
+	player := createRandomUser(t)
+	participant1 := createRandomParticipant(t, homeTeam, awayTeam, game, player)
+
+	err := testQueries.DeleteGameParticipant(context.Background(), participant1.ID)
+	require.NoError(t, err)
+
+	participant2, err := testQueries.GetGameParticipant(context.Background(), participant1.ID)
+	require.Error(t, err)
+	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.Empty(t, participant2)
+}

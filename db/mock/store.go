@@ -156,6 +156,20 @@ func (mr *MockStoreMockRecorder) CreateUserTx(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserTx", reflect.TypeOf((*MockStore)(nil).CreateUserTx), arg0, arg1)
 }
 
+// DeleteGameParticipant mocks base method.
+func (m *MockStore) DeleteGameParticipant(arg0 context.Context, arg1 uuid.UUID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteGameParticipant", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteGameParticipant indicates an expected call of DeleteGameParticipant.
+func (mr *MockStoreMockRecorder) DeleteGameParticipant(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGameParticipant", reflect.TypeOf((*MockStore)(nil).DeleteGameParticipant), arg0, arg1)
+}
+
 // DeleteRole mocks base method.
 func (m *MockStore) DeleteRole(arg0 context.Context, arg1 uuid.UUID) error {
 	m.ctrl.T.Helper()
