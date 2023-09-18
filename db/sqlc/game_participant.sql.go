@@ -46,7 +46,8 @@ func (q *Queries) CreateGameParticipant(ctx context.Context, arg CreateGameParti
 }
 
 const deleteGameParticipant = `-- name: DeleteGameParticipant :exec
-DELETE FROM game_participant
+DELETE
+FROM game_participant
 WHERE id = $1
 `
 
