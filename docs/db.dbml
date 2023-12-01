@@ -63,6 +63,9 @@ Table team_members as UT {
     team_id uuid [ref: > T.id, not null]
     created_at timestamptz [not null, default: `now()`]
     updated_at timestamptz [not null, default: `now()`]
+    Indexes {
+      (user_id,team_id) [unique]
+    }
 }
 
 Table sessions {

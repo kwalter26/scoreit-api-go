@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-11-24T04:11:10.606Z
+-- Generated at: 2023-12-01T05:24:26.185Z
 
 CREATE TABLE "users"
 (
@@ -131,6 +131,8 @@ CREATE UNIQUE INDEX ON "user_roles" ("name", "user_id");
 CREATE UNIQUE INDEX ON "verify_emails" ("secret_code");
 
 CREATE UNIQUE INDEX ON "teams" ("name");
+
+CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_id");
 
 ALTER TABLE "user_roles"
     ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
