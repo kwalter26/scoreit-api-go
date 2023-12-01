@@ -34,11 +34,13 @@ type Game struct {
 }
 
 type GameParticipant struct {
-	ID          uuid.UUID     `json:"id"`
-	GameID      uuid.NullUUID `json:"game_id"`
-	PlayerID    uuid.NullUUID `json:"player_id"`
-	HomeTeam    bool          `json:"home_team"`
-	BatPosition int64         `json:"bat_position"`
+	ID          uuid.UUID `json:"id"`
+	GameID      uuid.UUID `json:"game_id"`
+	PlayerID    uuid.UUID `json:"player_id"`
+	TeamID      uuid.UUID `json:"team_id"`
+	BatPosition int64     `json:"bat_position"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type GameStat struct {

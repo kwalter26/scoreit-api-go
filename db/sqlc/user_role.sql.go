@@ -36,7 +36,8 @@ func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (UserRol
 }
 
 const deleteRole = `-- name: DeleteRole :exec
-DELETE FROM user_roles
+DELETE
+FROM user_roles
 WHERE id = $1
 `
 

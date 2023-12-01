@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"errors"
-	migrate "github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/kwalter26/scoreit-api-go/api"
