@@ -13,6 +13,7 @@ import (
 	_ "github.com/nats-io/nkeys"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	_ "google.golang.org/grpc"
 	"os"
 )
 
