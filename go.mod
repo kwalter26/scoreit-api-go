@@ -9,6 +9,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.4.0
 	github.com/lib/pq v1.10.9
+	github.com/nats-io/nkeys v0.4.6
 	github.com/o1egl/paseto v1.0.0
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/viper v1.17.0
