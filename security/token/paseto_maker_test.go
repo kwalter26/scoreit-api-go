@@ -3,7 +3,7 @@ package token
 import (
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/security"
-	"github.com/kwalter26/udemy-simplebank/util"
+	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"

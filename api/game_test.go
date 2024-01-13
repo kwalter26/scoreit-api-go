@@ -13,7 +13,7 @@ import (
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/scoreit-api-go/security/token"
-	"github.com/kwalter26/udemy-simplebank/util"
+	"github.com/kwalter26/scoreit-api-go/util"
 	pg "github.com/lib/pq"
 	"github.com/stretchr/testify/require"
 	"io"
@@ -700,7 +700,7 @@ func TestServerUpdateGame(t *testing.T) {
 func createRandomTeam() db.Team {
 	return db.Team{
 		ID:   uuid.New(),
-		Name: util.RandomOwner(),
+		Name: util.RandomName(),
 	}
 }
 

@@ -10,8 +10,10 @@ import (
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/util"
 	_ "github.com/lib/pq"
+	_ "github.com/nats-io/nkeys"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	_ "google.golang.org/grpc"
 	"os"
 )
 
