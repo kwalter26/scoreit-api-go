@@ -20,6 +20,9 @@ type Config struct {
 	TokenSymmetricKey string `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 	CasbinModelPath   string `mapstructure:"CASBIN_MODEL_PATH"`
 	CasbinPolicyPath  string `mapstructure:"CASBIN_POLICY_PATH"`
+
+	Auth0Domain   string `mapstructure:"AUTH0_DOMAIN"`
+	Auth0Audience string `mapstructure:"AUTH0_AUDIENCE"`
 }
 
 type Environment string
