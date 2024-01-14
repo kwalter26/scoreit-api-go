@@ -18,14 +18,7 @@ type CustomClaims struct {
 	Scope string `json:"scope"`
 }
 
-// Validate does nothing for this example, but we need
-// it to satisfy validator.CustomClaims interface.
-func (c CustomClaims) Validate(ctx context.Context) error {
-	return nil
-}
-
-func CheckJWT(config util.Config) gin.HandlerFunc {
-
+func NewAuth0JwtValidator(config util.Config) *validator.Validator {
 	issuerURL, err := url.Parse("https://" + config.Auth0Domain + "/")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to parse the issuer url")
@@ -47,13 +40,23 @@ func CheckJWT(config util.Config) gin.HandlerFunc {
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to set up the jwt validator")
 	}
+	return jwtValidator
+}
+
+// Validate does nothing for this example, but we need
+// it to satisfy validator.CustomClaims interface.
+func (c CustomClaims) Validate(ctx context.Context) error {
+	return nil
+}
+
+func CheckJWT(v *validator.Validator) gin.HandlerFunc {
 
 	errorHandler := func(w http.ResponseWriter, r *http.Request, err error) {
 		log.Error().Err(err).Msg("Encountered error while validating JWT")
 	}
 
 	middleware := jwtmiddleware.New(
-		jwtValidator.ValidateToken,
+		v.ValidateToken,
 		jwtmiddleware.WithErrorHandler(errorHandler),
 	)
 

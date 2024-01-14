@@ -2,9 +2,12 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
@@ -20,6 +23,17 @@ import (
 	"time"
 )
 
+var (
+	TokenSecret   = "secret"
+	TokenIssuer   = "https://localhost/"
+	TokenAudience = "me"
+)
+
+func mockTokenValidator(ctx context.Context) (interface{}, error) {
+	// It always returns a mock secret
+	return []byte(TokenSecret), nil
+}
+
 func newTestServer(t *testing.T, store db.Store) *Server {
 	config := util.Config{
 		TokenSymmetricKey:   util.RandomString(32),
@@ -28,7 +42,14 @@ func newTestServer(t *testing.T, store db.Store) *Server {
 		CasbinModelPath:     "../security/authz_model.conf",
 	}
 
-	server, err := NewServer(config, store)
+	jwtValidator, _ := validator.New(
+		mockTokenValidator,
+		validator.HS256,
+		TokenIssuer,
+		[]string{TokenAudience},
+	)
+
+	server, err := NewServer(config, store, jwtValidator)
 	require.NoError(t, err)
 	return server
 }
@@ -95,11 +116,15 @@ func EqCreateUserTxParamsMatcher(arg db.CreateUserTxParams, password string) gom
 }
 
 func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, roles []security.Role, authorizationType string, u uuid.UUID, duration time.Duration) {
-	createToken, payload, err := tokenMaker.CreateToken(u, roles, duration)
+	jwtTokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:   TokenIssuer,
+		Audience: TokenAudience,
+	})
+	accessToken, err := jwtTokenGenerator.SignedString([]byte(TokenSecret))
 	require.NoError(t, err)
-	require.NotEmpty(t, payload)
+	require.NotEmpty(t, accessToken)
 
-	authorizationHeader := authorizationType + " " + createToken
+	authorizationHeader := authorizationType + " " + accessToken
 	request.Header.Set(middleware.AuthorizationHeaderKey, authorizationHeader)
 }
 
