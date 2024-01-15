@@ -52,7 +52,7 @@ func TestServer_CreateUserRole(t *testing.T) {
 					}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -69,7 +69,7 @@ func TestServer_CreateUserRole(t *testing.T) {
 				// no stubs needed
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -85,7 +85,7 @@ func TestServer_CreateUserRole(t *testing.T) {
 				// no stubs needed
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -108,7 +108,7 @@ func TestServer_CreateUserRole(t *testing.T) {
 					Return(db.UserRole{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -175,7 +175,7 @@ func TestServer_ListUserRoles(t *testing.T) {
 					}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -193,7 +193,7 @@ func TestServer_ListUserRoles(t *testing.T) {
 					Return([]db.UserRole{}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -208,7 +208,7 @@ func TestServer_ListUserRoles(t *testing.T) {
 				// no stubs needed
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -225,7 +225,7 @@ func TestServer_ListUserRoles(t *testing.T) {
 					Return([]db.UserRole{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -298,7 +298,7 @@ func TestServer_GetUserRoles(t *testing.T) {
 					}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -315,7 +315,7 @@ func TestServer_GetUserRoles(t *testing.T) {
 					Return([]db.UserRole{}, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -329,7 +329,7 @@ func TestServer_GetUserRoles(t *testing.T) {
 				// no stubs needed
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -345,7 +345,7 @@ func TestServer_GetUserRoles(t *testing.T) {
 					Return([]db.UserRole{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)

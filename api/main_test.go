@@ -47,6 +47,10 @@ func newTestServer(t *testing.T, store db.Store) *Server {
 		validator.HS256,
 		TokenIssuer,
 		[]string{TokenAudience},
+		validator.WithCustomClaims(func() validator.CustomClaims {
+			return &middleware.CustomClaims{}
+		}),
+		validator.WithAllowedClockSkew(time.Minute),
 	)
 
 	server, err := NewServer(config, store, jwtValidator)
@@ -116,10 +120,23 @@ func EqCreateUserTxParamsMatcher(arg db.CreateUserTxParams, password string) gom
 }
 
 func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, roles []security.Role, authorizationType string, u uuid.UUID, duration time.Duration) {
-	jwtTokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:   TokenIssuer,
-		Audience: TokenAudience,
-	})
+
+	type CustomClaims struct {
+		middleware.CustomClaims
+		jwt.StandardClaims
+	}
+
+	claims := CustomClaims{
+		CustomClaims: middleware.CustomClaims{Roles: roles, Scope: "openid"},
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    TokenIssuer,
+			Audience:  TokenAudience,
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+	}
+
+	jwtTokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	accessToken, err := jwtTokenGenerator.SignedString([]byte(TokenSecret))
 	require.NoError(t, err)
 	require.NotEmpty(t, accessToken)

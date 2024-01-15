@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
+	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/scoreit-api-go/security/token"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/rs/zerolog/log"
@@ -21,11 +22,11 @@ type Server struct {
 }
 
 func (s *Server) setupRouter() {
-	//enforcer, err := security.NewEnforcer(s.config)
-	//if err != nil {
-	//	log.Fatal().Err(err).Msg("failed to create casbin enforcer")
-	//}
-	//log.Info().Msg("created casbin enforcer")
+	enforcer, err := security.NewEnforcer(s.config)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to create casbin enforcer")
+	}
+	log.Info().Msg("created casbin enforcer")
 
 	router := gin.New()
 	router.Use(gin.Recovery())
@@ -37,10 +38,8 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/auth/logout", s.LogoutUser)
 
 	authRoutes := router.Group("/api/")
-	//authRoutes.Use(middleware.AuthMiddleware(s.tokenMaker))
-	//authRoutes.Use(middleware.NewAuthorizeMiddleware(enforcer))
 	authRoutes.Use(middleware.CheckJWT(s.tokenValidator))
-	//authRoutes.Use(middleware.NewAuthorizeMiddleware(enforcer))
+	authRoutes.Use(middleware.NewAuthorizeMiddleware(enforcer))
 
 	authRoutes.GET("/v1/teams", s.ListTeams)
 	authRoutes.POST("/v1/teams", s.CreateTeam)

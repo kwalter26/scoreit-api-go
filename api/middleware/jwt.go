@@ -6,6 +6,7 @@ import (
 	"github.com/auth0/go-jwt-middleware/v2/jwks"
 	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
+	"github.com/kwalter26/scoreit-api-go/security"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -15,7 +16,8 @@ import (
 
 // CustomClaims contains custom data we want from the token.
 type CustomClaims struct {
-	Scope string `json:"scope"`
+	Scope string          `json:"scope"`
+	Roles []security.Role `json:"scoreit.us.auth0.com/roles"`
 }
 
 func NewAuth0JwtValidator(config util.Config) *validator.Validator {
@@ -65,6 +67,8 @@ func CheckJWT(v *validator.Validator) gin.HandlerFunc {
 		var handler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 			encounteredError = false
 			ctx.Request = r
+			token := ctx.Request.Context().Value(jwtmiddleware.ContextKey{})
+			ctx.Set(AuthorizationPayloadKey, token)
 			ctx.Next()
 		}
 
