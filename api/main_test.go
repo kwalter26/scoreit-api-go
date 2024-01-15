@@ -29,11 +29,6 @@ var (
 	TokenAudience = "me"
 )
 
-func mockTokenValidator(ctx context.Context) (interface{}, error) {
-	// It always returns a mock secret
-	return []byte(TokenSecret), nil
-}
-
 func newTestServer(t *testing.T, store db.Store) *Server {
 	config := util.Config{
 		TokenSymmetricKey:   util.RandomString(32),
@@ -43,7 +38,9 @@ func newTestServer(t *testing.T, store db.Store) *Server {
 	}
 
 	jwtValidator, _ := validator.New(
-		mockTokenValidator,
+		func(ctx context.Context) (interface{}, error) {
+			return []byte(TokenSecret), nil
+		},
 		validator.HS256,
 		TokenIssuer,
 		[]string{TokenAudience},

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"encoding/csv"
-	casbin "github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/kwalter26/scoreit-api-go/util"
 	"github.com/rs/zerolog/log"
