@@ -128,7 +128,7 @@ func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Make
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    TokenIssuer,
 			Audience:  TokenAudience,
-			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+			ExpiresAt: time.Now().Add(duration).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
