@@ -1,3 +1,4 @@
+// Package middleware provides middlewares for various functionalities like JWT validation, etc.
 package middleware
 
 import (
@@ -15,11 +16,14 @@ import (
 )
 
 // CustomClaims contains custom data we want from the token.
+// It stores Scope and Roles, and satisfies validator.CustomClaims interface.
 type CustomClaims struct {
 	Scope string          `json:"scope"`
 	Roles []security.Role `json:"scoreit.us.auth0.com/roles"`
 }
 
+// NewAuth0JwtValidator creates a new JWT Validator configured to use Auth0's settings based on the provided configuration.
+// It fetches keys from JWKS provider and validates the JWT signatures.
 func NewAuth0JwtValidator(config util.Config) *validator.Validator {
 	issuerURL, err := url.Parse("https://" + config.Auth0Domain + "/")
 	if err != nil {
@@ -45,12 +49,14 @@ func NewAuth0JwtValidator(config util.Config) *validator.Validator {
 	return jwtValidator
 }
 
-// Validate does nothing for this example, but we need
-// it to satisfy validator.CustomClaims interface.
+// Validate is a dummy method which satisfies the validator.CustomClaims interface.
+// However, it doesn't perform any validations.
 func (c CustomClaims) Validate(ctx context.Context) error {
 	return nil
 }
 
+// CheckJWT is a middleware that checks and validates the incoming JWT in the HTTP request header.
+// In case of any errors in validation, it aborts the request and sends an 'Unauthorized' status.
 func CheckJWT(v *validator.Validator) gin.HandlerFunc {
 
 	errorHandler := func(w http.ResponseWriter, r *http.Request, err error) {
