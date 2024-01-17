@@ -22,7 +22,7 @@ type Server struct {
 }
 
 func (s *Server) setupRouter() {
-	enforcer, err := security.NewEnforcer(s.config)
+	enforcer, err := security.NewEnforcer(s.config, security.SecurityResources())
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create casbin enforcer")
 	}
