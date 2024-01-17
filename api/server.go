@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
@@ -12,10 +13,11 @@ import (
 )
 
 type Server struct {
-	config     util.Config
-	store      db.Store
-	tokenMaker token.Maker
-	router     *gin.Engine
+	config         util.Config
+	store          db.Store
+	tokenMaker     token.Maker
+	tokenValidator *validator.Validator
+	router         *gin.Engine
 	//app    *newrelic.Application
 }
 
@@ -36,7 +38,7 @@ func (s *Server) setupRouter() {
 	router.POST("/api/v1/auth/logout", s.LogoutUser)
 
 	authRoutes := router.Group("/api/")
-	authRoutes.Use(middleware.AuthMiddleware(s.tokenMaker))
+	authRoutes.Use(middleware.CheckJWT(s.tokenValidator))
 	authRoutes.Use(middleware.NewAuthorizeMiddleware(enforcer))
 
 	authRoutes.GET("/v1/teams", s.ListTeams)
@@ -59,7 +61,7 @@ func (s *Server) setupRouter() {
 	s.router = router
 }
 
-func NewServer(config util.Config, store db.Store) (*Server, error) {
+func NewServer(config util.Config, store db.Store, tokenValidator *validator.Validator) (*Server, error) {
 	// print current working directory
 	dir, err := os.Getwd()
 	log.Info().Str("dir", dir).Msg("current working directory")
@@ -67,7 +69,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	server := &Server{store: store, config: config, tokenMaker: tokenMaker}
+	server := &Server{store: store, config: config, tokenMaker: tokenMaker, tokenValidator: tokenValidator}
 
 	server.setupRouter()
 

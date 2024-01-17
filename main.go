@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"errors"
-	migrate "github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/kwalter26/scoreit-api-go/api"
+	"github.com/kwalter26/scoreit-api-go/api/middleware"
 	db "github.com/kwalter26/scoreit-api-go/db/sqlc"
 	"github.com/kwalter26/scoreit-api-go/util"
 	_ "github.com/lib/pq"
@@ -55,7 +56,7 @@ func runDBMigrations(migrationURL string, dbSource string) {
 
 // runGINServer runs gin server but is not used anymore
 func runGINServer(config util.Config, store db.Store) {
-	server, err := api.NewServer(config, store)
+	server, err := api.NewServer(config, store, middleware.NewAuth0JwtValidator(config))
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create gin server")
 	}

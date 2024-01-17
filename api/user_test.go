@@ -259,7 +259,7 @@ func TestServerListUsers(t *testing.T) {
 					Return(listUserRows, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -281,7 +281,7 @@ func TestServerListUsers(t *testing.T) {
 					Return(nil, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -313,7 +313,7 @@ func TestServerListUsers(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, users[0].ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -368,7 +368,7 @@ func TestServerGetUser(t *testing.T) {
 					Return(user, nil)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -385,7 +385,7 @@ func TestServerGetUser(t *testing.T) {
 					Return(db.User{}, sql.ErrNoRows)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusNotFound, recorder.Code)
@@ -401,7 +401,7 @@ func TestServerGetUser(t *testing.T) {
 					Return(db.User{}, sql.ErrConnDone)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
@@ -416,7 +416,7 @@ func TestServerGetUser(t *testing.T) {
 					Times(0)
 			},
 			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
-				addAuthorization(t, request, tokenMaker, security.UserRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
+				addAuthorization(t, request, tokenMaker, security.AdminRoles, middleware.AuthorizationTypeBearer, user.ID, time.Minute)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
