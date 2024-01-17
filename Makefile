@@ -30,4 +30,4 @@ mock:
 gin:
 	GIN_MODE=release gin -i run main.go --all --port 8080
 
-.PHONY: db_docs db_schema
+.PHONY: db_docs db_schema test
