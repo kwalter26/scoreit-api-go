@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 RUN go build -o main .
 
-FROM alpine:3.18.5
+FROM alpine:3.18.6
 
 ARG USERNAME=scorekeeper
 ARG GROUP=scorekeeper
