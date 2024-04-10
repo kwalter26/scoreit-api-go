@@ -22,7 +22,7 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -json -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools > results.out
+	go test -json -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools > results.json
 
 test_report:
 	go-junit-report -set-exit-code -in results.out -out report.xml
