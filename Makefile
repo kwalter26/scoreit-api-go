@@ -22,10 +22,10 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools > results.out
+	go test -json -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools > results.json
 
 test_report:
-	go-junit-report -set-exit-code -in results.out -out report.xml
+	go-junit-report -set-exit-code -in results.json -out report.xml
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/kwalter26/scoreit-api-go/db/sqlc Store

@@ -48,6 +48,17 @@ jobs:
       - name: Test
         run: make test
 
+      - name: Test Report
+        run: make test_report
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Go Tests            # Name of the check run which will be created
+          path: report.xml   # Path to test results
+          reporter: java-junit
+
       - name: SonarCloud Scan
         # You may pin to the exact commit or the version.
         # uses: SonarSource/sonarcloud-github-action@5875562561d22a34be0c657405578705a169af6c
