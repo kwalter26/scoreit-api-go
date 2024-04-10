@@ -22,7 +22,10 @@ sqlc:
 	sqlc generate
 
 test:
-	go test -v -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools
+	go test -json -coverpkg=./... -cover ./... -coverprofile=coverage.out -short ./tools > results.out
+
+test_report:
+	go-junit-report -set-exit-code -in results.out -out report.xml
 
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/kwalter26/scoreit-api-go/db/sqlc Store
@@ -30,4 +33,4 @@ mock:
 gin:
 	GIN_MODE=release gin -i run main.go --all --port 8080
 
-.PHONY: db_docs db_schema test
+.PHONY: db_docs db_schema test test_report

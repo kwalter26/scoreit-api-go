@@ -30,3 +30,5 @@ gin-bin
 
 /authz_model.conf
 /authz_policy.csv
+
+report.xml
