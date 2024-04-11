@@ -1,0 +1,5 @@
+docs
+test
+db/mock
+**/*_test.go
+**/testdata/
