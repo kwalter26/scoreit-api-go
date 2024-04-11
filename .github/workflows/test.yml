@@ -16,7 +16,7 @@ jobs:
         image: postgres:13.2
         env:
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: secret
+          POSTGRES_PASSWORD: ""
           POSTGRES_DB: scoreit
         ports:
           - 5432:5432
