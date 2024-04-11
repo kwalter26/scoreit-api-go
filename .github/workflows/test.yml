@@ -16,8 +16,9 @@ jobs:
         image: postgres:13.2
         env:
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: ""
+          POSTGRES_PASSWORD: secret
           POSTGRES_DB: scoreit
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         # needed because the postgres container does not provide a healthcheck
