@@ -23,11 +23,9 @@ type Config struct {
 	CasbinModelPath   string `mapstructure:"CASBIN_MODEL_PATH"`
 	CasbinPolicyPath  string `mapstructure:"CASBIN_POLICY_PATH"`
 
-	AuthEnabled bool `mapstructure:"AUTH_ENABLED"`
+	AuthEnabled   bool   `mapstructure:"AUTH_ENABLED"`
 	Auth0Domain   string `mapstructure:"AUTH0_DOMAIN"`
 	Auth0Audience string `mapstructure:"AUTH0_AUDIENCE"`
-}
-
 }
 
 const (
