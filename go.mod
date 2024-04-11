@@ -1,6 +1,6 @@
 module github.com/kwalter26/scoreit-api-go
 
-go 1.21
+go 1.22
 
 require (
 	github.com/casbin/casbin/v2 v2.87.1
