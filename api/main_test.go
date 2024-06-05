@@ -2,9 +2,12 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/auth0/go-jwt-middleware/v2/validator"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/kwalter26/scoreit-api-go/api/middleware"
@@ -20,6 +23,12 @@ import (
 	"time"
 )
 
+var (
+	TokenSecret   = "secret"
+	TokenIssuer   = "https://localhost/"
+	TokenAudience = "me"
+)
+
 func newTestServer(t *testing.T, store db.Store) *Server {
 	config := util.Config{
 		TokenSymmetricKey:   util.RandomString(32),
@@ -28,7 +37,20 @@ func newTestServer(t *testing.T, store db.Store) *Server {
 		CasbinModelPath:     "../security/authz_model.conf",
 	}
 
-	server, err := NewServer(config, store)
+	jwtValidator, _ := validator.New(
+		func(ctx context.Context) (interface{}, error) {
+			return []byte(TokenSecret), nil
+		},
+		validator.HS256,
+		TokenIssuer,
+		[]string{TokenAudience},
+		validator.WithCustomClaims(func() validator.CustomClaims {
+			return &middleware.CustomClaims{}
+		}),
+		validator.WithAllowedClockSkew(time.Minute),
+	)
+
+	server, err := NewServer(config, store, jwtValidator)
 	require.NoError(t, err)
 	return server
 }
@@ -95,11 +117,28 @@ func EqCreateUserTxParamsMatcher(arg db.CreateUserTxParams, password string) gom
 }
 
 func addAuthorization(t *testing.T, request *http.Request, tokenMaker token.Maker, roles []security.Role, authorizationType string, u uuid.UUID, duration time.Duration) {
-	createToken, payload, err := tokenMaker.CreateToken(u, roles, duration)
-	require.NoError(t, err)
-	require.NotEmpty(t, payload)
 
-	authorizationHeader := authorizationType + " " + createToken
+	type CustomClaims struct {
+		middleware.CustomClaims
+		jwt.StandardClaims
+	}
+
+	claims := CustomClaims{
+		CustomClaims: middleware.CustomClaims{Roles: roles, Scope: "openid"},
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    TokenIssuer,
+			Audience:  TokenAudience,
+			ExpiresAt: time.Now().Add(duration).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+	}
+
+	jwtTokenGenerator := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken, err := jwtTokenGenerator.SignedString([]byte(TokenSecret))
+	require.NoError(t, err)
+	require.NotEmpty(t, accessToken)
+
+	authorizationHeader := authorizationType + " " + accessToken
 	request.Header.Set(middleware.AuthorizationHeaderKey, authorizationHeader)
 }
 
