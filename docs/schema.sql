@@ -1,19 +1,19 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-07-27T04:17:04.228Z
+-- Generated at: 2023-12-01T05:24:26.185Z
 
 CREATE TABLE "users"
 (
-    "id"                  uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "username"            varchar          NOT NULL,
-    "first_name"          varchar          NOT NULL,
-    "last_name"           varchar          NOT NULL,
-    "email"               varchar UNIQUE   NOT NULL,
-    "is_email_verified"   boolean          NOT NULL DEFAULT false,
-    "hashed_password"     varchar          NOT NULL,
-    "password_changed_at" timestamptz      NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-    "created_at"          timestamptz      NOT NULL DEFAULT (now()),
-    "updated_at"          timestamptz      NOT NULL DEFAULT (now())
+    "id"                  uuid PRIMARY KEY    NOT NULL DEFAULT (uuid_generate_v4()),
+    "username"            varchar(100)        NOT NULL,
+    "first_name"          varchar(100)        NOT NULL,
+    "last_name"           varchar(100)        NOT NULL,
+    "email"               varchar(100) UNIQUE NOT NULL,
+    "is_email_verified"   boolean             NOT NULL DEFAULT false,
+    "hashed_password"     varchar             NOT NULL,
+    "password_changed_at" timestamptz         NOT NULL DEFAULT '0001-01-01 00:00:00Z',
+    "created_at"          timestamptz         NOT NULL DEFAULT (now()),
+    "updated_at"          timestamptz         NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "user_roles"
@@ -28,8 +28,8 @@ CREATE TABLE "user_roles"
 CREATE TABLE "verify_emails"
 (
     "id"          uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "user_id"     varchar          NOT NULL,
-    "email"       varchar          NOT NULL,
+    "user_id" varchar(100) NOT NULL,
+    "email"   varchar(100) NOT NULL,
     "secret_code" varchar          NOT NULL,
     "is_used"     boolean          NOT NULL DEFAULT false,
     "created_at"  timestamptz      NOT NULL DEFAULT (now()),
@@ -39,7 +39,7 @@ CREATE TABLE "verify_emails"
 CREATE TABLE "teams"
 (
     "id"         uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "name"       varchar          NOT NULL,
+    "name" varchar(100) NOT NULL,
     "created_at" timestamptz      NOT NULL DEFAULT (now()),
     "updated_at" timestamptz      NOT NULL DEFAULT (now())
 );
@@ -48,7 +48,7 @@ CREATE TABLE "team_members"
 (
     "id"               uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
     "number"           bigint           NOT NULL,
-    "primary_position" varchar          NOT NULL,
+    "primary_position" varchar(100) NOT NULL,
     "user_id"          uuid             NOT NULL,
     "team_id"          uuid             NOT NULL,
     "created_at"       timestamptz      NOT NULL DEFAULT (now()),
@@ -58,13 +58,13 @@ CREATE TABLE "team_members"
 CREATE TABLE "sessions"
 (
     "id"            uuid PRIMARY KEY,
-    "user_id"       uuid        NOT NULL,
-    "refresh_token" varchar     NOT NULL,
-    "user_agent"    varchar     NOT NULL,
-    "client_ip"     varchar     NOT NULL,
-    "is_blocked"    boolean     NOT NULL DEFAULT false,
+    "user_id"       uuid         NOT NULL,
+    "refresh_token" varchar(700) NOT NULL,
+    "user_agent"    varchar(100) NOT NULL,
+    "client_ip"     varchar(100) NOT NULL,
+    "is_blocked"    boolean      NOT NULL DEFAULT false,
     "expires_at"    timestamptz,
-    "created_at"    timestamptz NOT NULL DEFAULT (now())
+    "created_at"    timestamptz  NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "game"
@@ -109,10 +109,12 @@ CREATE TABLE "atbat"
 CREATE TABLE "game_participant"
 (
     "id"           uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "game_id"      uuid,
-    "player_id"    uuid,
-    "home_team"    boolean          NOT NULL,
-    "bat_position" bigint           NOT NULL
+    "game_id"      uuid        NOT NULL,
+    "player_id"    uuid        NOT NULL,
+    "team_id"      uuid        NOT NULL,
+    "bat_position" bigint      NOT NULL,
+    "created_at"   timestamptz NOT NULL DEFAULT (now()),
+    "updated_at"   timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "game_stat"
@@ -129,6 +131,8 @@ CREATE UNIQUE INDEX ON "user_roles" ("name", "user_id");
 CREATE UNIQUE INDEX ON "verify_emails" ("secret_code");
 
 CREATE UNIQUE INDEX ON "teams" ("name");
+
+CREATE UNIQUE INDEX ON "team_members" ("user_id", "team_id");
 
 ALTER TABLE "user_roles"
     ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
@@ -174,6 +178,9 @@ ALTER TABLE "game_participant"
 
 ALTER TABLE "game_participant"
     ADD FOREIGN KEY ("player_id") REFERENCES "users" ("id");
+
+ALTER TABLE "game_participant"
+    ADD FOREIGN KEY ("team_id") REFERENCES "teams" ("id");
 
 ALTER TABLE "game_stat"
     ADD FOREIGN KEY ("atbat_id") REFERENCES "atbat" ("id");

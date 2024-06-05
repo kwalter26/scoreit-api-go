@@ -13,14 +13,17 @@ import (
 type Querier interface {
 	AddTeamMember(ctx context.Context, arg AddTeamMemberParams) (TeamMember, error)
 	CreateGame(ctx context.Context, arg CreateGameParams) (Game, error)
+	CreateGameParticipant(ctx context.Context, arg CreateGameParticipantParams) (GameParticipant, error)
 	CreateRole(ctx context.Context, arg CreateRoleParams) (UserRole, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateTeam(ctx context.Context, name string) (Team, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteGameParticipant(ctx context.Context, id uuid.UUID) error
 	DeleteRole(ctx context.Context, id uuid.UUID) error
 	DeleteTeam(ctx context.Context, id uuid.UUID) error
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	GetGame(ctx context.Context, id uuid.UUID) (Game, error)
+	GetGameParticipant(ctx context.Context, id uuid.UUID) (GameParticipant, error)
 	GetRole(ctx context.Context, id uuid.UUID) (UserRole, error)
 	GetRoles(ctx context.Context, userID uuid.UUID) ([]UserRole, error)
 	GetRolesByName(ctx context.Context, name string) ([]UserRole, error)
@@ -28,6 +31,8 @@ type Querier interface {
 	GetTeam(ctx context.Context, id uuid.UUID) (Team, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
+	ListGameParticipants(ctx context.Context, arg ListGameParticipantsParams) ([]GameParticipant, error)
+	ListGameParticipantsForPlayer(ctx context.Context, arg ListGameParticipantsForPlayerParams) ([]GameParticipant, error)
 	ListGames(ctx context.Context, arg ListGamesParams) ([]Game, error)
 	ListRoles(ctx context.Context, arg ListRolesParams) ([]UserRole, error)
 	ListTeamMembers(ctx context.Context, arg ListTeamMembersParams) ([]ListTeamMembersRow, error)
@@ -35,6 +40,7 @@ type Querier interface {
 	ListTeamsOfUser(ctx context.Context, arg ListTeamsOfUserParams) ([]ListTeamsOfUserRow, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error)
 	UpdateGame(ctx context.Context, arg UpdateGameParams) (Game, error)
+	UpdateGameParticipant(ctx context.Context, arg UpdateGameParticipantParams) (GameParticipant, error)
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) (Session, error)
 	UpdateTeam(ctx context.Context, arg UpdateTeamParams) (Team, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
