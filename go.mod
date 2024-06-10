@@ -12,7 +12,7 @@ require (
 	github.com/nats-io/nkeys v0.4.7
 	github.com/o1egl/paseto v1.0.0
 	github.com/rs/zerolog v1.32.0
-	github.com/spf13/viper v1.18.2
+	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.24.0
 	google.golang.org/grpc v1.64.0
