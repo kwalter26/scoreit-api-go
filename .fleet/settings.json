@@ -1,0 +1,14 @@
+{
+    "plugins": [
+        {
+            "type": "add",
+            "pluginName": "fleet.go"
+        },
+        {
+            "type": "add",
+            "pluginName": "fleet.ai"
+        }
+    ],
+    "editor.formatOnSave": true,
+    "backend.maxHeapSizeMb": 1487,
+}

@@ -40,10 +40,12 @@ CREATE TABLE "atbat"
 CREATE TABLE "game_participant"
 (
     "id"           uuid PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-    "game_id"      uuid,
-    "player_id"    uuid,
-    "home_team"    boolean          NOT NULL,
-    "bat_position" bigint           NOT NULL
+    "game_id"      uuid        NOT NULL,
+    "player_id"    uuid        NOT NULL,
+    "team_id"      uuid        NOT NULL,
+    "bat_position" bigint      NOT NULL,
+    "created_at"   timestamptz NOT NULL DEFAULT (now()),
+    "updated_at"   timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "game_stat"
@@ -82,6 +84,9 @@ ALTER TABLE "game_participant"
 
 ALTER TABLE "game_participant"
     ADD FOREIGN KEY ("player_id") REFERENCES "users" ("id");
+
+ALTER TABLE "game_participant"
+    ADD FOREIGN KEY ("team_id") REFERENCES "teams" ("id");
 
 ALTER TABLE "game_stat"
     ADD FOREIGN KEY ("atbat_id") REFERENCES "atbat" ("id");
